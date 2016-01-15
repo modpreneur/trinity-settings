@@ -22,7 +22,7 @@ class DataSet
 
         $faker = Factory::create();;
 
-        $count = 5;
+        $count = 10;
 
         for($i = 0; $i < $count; $i++) {
             $setting = new Setting();

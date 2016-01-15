@@ -32,7 +32,7 @@ class SettingTest extends WebTestCase
     public function testAllSettings()
     {
         $settings = $this->getAllSettings();
-        dump($settings);
+        //dump($settings);
 //        $rows = [];
 //
 //        /**
