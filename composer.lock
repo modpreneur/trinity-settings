@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a915991f25a0d0754c7026cb2f2a1f15",
-    "content-hash": "d4c10c456575eaccb64b96fb7f7977ee",
+    "hash": "6f746d758314cba636fa6e341025ef37",
+    "content-hash": "b7a16a4cabae40fc8275f56f240e8236",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -3182,7 +3182,7 @@
             ],
             "authors": [
                 {
-                    "name": "Pádraic Brady",
+                    "name": "Padraic Brady",
                     "email": "padraic.brady@gmail.com",
                     "homepage": "http://blog.astrumfutura.com"
                 },
