@@ -45,11 +45,8 @@ class AppKernel extends Kernel
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new \Symfony\Bundle\TwigBundle\TwigBundle(),
-            new \JMS\SerializerBundle\JMSSerializerBundle(),
             new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
-
             new \Trinity\Bundle\SettingsBundle\SettingsBundle(),
-
         );
     }
 

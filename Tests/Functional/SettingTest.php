@@ -5,8 +5,7 @@
 
 namespace Trinity\Bundle\SettingsBundle\Tests\Functional;
 
-
-use Trinity\Bundle\SettingsBundle\Entity\Setting;
+use Trinity\Bundle\SettingsBundle\Manager\SettingsManager;
 
 
 /**
@@ -15,45 +14,16 @@ use Trinity\Bundle\SettingsBundle\Entity\Setting;
  */
 class SettingTest extends WebTestCase
 {
-
-
-    public function getAllSettings()
+    public function testDefaultValue()
     {
-        $repository = $this
-            ->get('doctrine.orm.default_entity_manager')
-            ->getRepository('SettingsBundle:Setting');
+        /** @var SettingsManager $settings */
+        $settings = $this->get( 'trinity_settings' );
 
-        $settings = $repository
-            ->findAll();
+        $settings->setDefault( 'default_value', 'hello' );
+        $this->assertEquals( 'hello', $settings->get('default_value') );
 
-        return $settings;
+        $settings->set( 'default_value', 'new value' );
+        $this->assertEquals( 'new value', $settings->get('default_value') );
     }
-
-    public function testAllSettings()
-    {
-        $settings = $this->getAllSettings();
-        //dump($settings);
-//        $rows = [];
-//
-//        /**
-//         * @var Product[] $products
-//         */
-//        foreach ($products as $product) {
-//            $rows[] = [
-//                'id' => $product->getId(),
-//                'name' => $product->getName(),
-//            ];
-//        }
-//
-//        $this->assertEquals(
-//            $this->toJson($rows),
-//            $this->table('product')
-//        );
-
-    }
-
-
-
-
 
 }

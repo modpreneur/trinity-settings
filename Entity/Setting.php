@@ -86,7 +86,7 @@ class Setting
      */
     public function setValue($value)
     {
-        $this->value = $value;
+        $this->value = serialize($value);
 
         return $this;
     }
@@ -98,7 +98,7 @@ class Setting
      */
     public function getValue()
     {
-        return $this->value;
+        return unserialize($this->value);
     }
 
     /**

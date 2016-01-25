@@ -1,1 +1,9 @@
 services:
+
+    trinity_settings:
+      class: Trinity\Bundle\SettingsBundle\Manager\SettingsManager
+      arguments:
+        - "@doctrine.orm.default_entity_manager"
+
+    trinity.settings.twig:
+      class: Trinity\Bundle\SettingsBundle\Twig\SettingsExtension

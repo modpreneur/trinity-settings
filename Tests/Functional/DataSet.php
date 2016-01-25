@@ -5,11 +5,9 @@
 
 namespace Trinity\Bundle\SettingsBundle\Tests\Functional;
 
-
 use Doctrine\ORM\EntityManager;
 use Faker\Factory;
 use Trinity\Bundle\SettingsBundle\Entity\Setting;
-
 
 /**
  * Class DataSet
