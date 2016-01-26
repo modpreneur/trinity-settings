@@ -42,8 +42,17 @@ class SettingsManager implements SettingsManagerInterface
      */
     function set($name, $value, $owner = null)
     {
-        $setting = new Setting();
-        $setting->setName($name);
+        $item = $this->get($name, $owner);
+        $nname = ($owner != null )? $name . '_' . $owner:$name;
+
+        if( !(array_key_exists($name, $this->defaults) && $this->defaults[$name] == $item) || $item != null){
+            $setting = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(['name' => $nname, 'ownerId' => $owner]);
+            if($setting == null) $setting = new Setting();
+        }else{
+            $setting = new Setting();
+        }
+
+        $setting->setName($nname);
         $setting->setValue($value);
         $setting->setOwnerId($owner);
 
@@ -78,6 +87,8 @@ class SettingsManager implements SettingsManagerInterface
      */
     function get($name, $owner = null)
     {
+        if($owner) $name .= '_' . $owner;
+
         $property = $this->getOneByOwner($name, $owner);
 
         if(null == $property && array_key_exists($name, $this->defaults)){
@@ -133,6 +144,7 @@ class SettingsManager implements SettingsManagerInterface
 
 
     /**
+     * @param $name
      * @param $owner
      * @return null|object|Setting
      */
