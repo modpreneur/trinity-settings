@@ -95,12 +95,7 @@ class SettingsManager implements SettingsManagerInterface
     function get($name, $owner = null)
     {
         if($owner) $name .= '_' . $owner;
-
-        try{
-            $property = $this->getOneByOwner($name, $owner);
-        }catch(PropertyNotExistsException $ex){
-            $property = null;
-        }
+        $property = $this->getOneByOwner($name, $owner);
 
         if(null == $property && array_key_exists($name, $this->defaults)){
             $property = unserialize($this->defaults[$name]);
@@ -167,12 +162,6 @@ class SettingsManager implements SettingsManagerInterface
             $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name, "ownerId" => $owner]);
         }else{
             $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name]);
-        }
-
-        if(null == $property){
-            if(null === $property){
-                throw new PropertyNotExistsException('Property \'' . $name . '\' doesn\'t exists.');
-            }
         }
 
         return $property;
