@@ -7,6 +7,7 @@ namespace Trinity\Bundle\SettingsBundle\Manager;
 
 use Doctrine\ORM\EntityManager;
 use Trinity\Bundle\SettingsBundle\Entity\Setting;
+use Trinity\Bundle\SettingsBundle\Exception\PropertyNotExistsException;
 
 
 /**
@@ -42,7 +43,12 @@ class SettingsManager implements SettingsManagerInterface
      */
     function set($name, $value, $owner = null)
     {
-        $item = $this->get($name, $owner);
+        try{
+            $item = $this->get($name, $owner);
+        }catch(PropertyNotExistsException $ex){
+            $item = null;
+        }
+
         $nname = ($owner != null )? $name . '_' . $owner:$name;
 
         if( !(array_key_exists($name, $this->defaults) && $this->defaults[$name] == $item) || $item != null){
@@ -84,17 +90,24 @@ class SettingsManager implements SettingsManagerInterface
      * @param string $name
      * @param int|entity|null $owner int or entity with method 'getId()'
      * @return mixed
+     * @throws PropertyNotExistsException
      */
     function get($name, $owner = null)
     {
         if($owner) $name .= '_' . $owner;
 
-        $property = $this->getOneByOwner($name, $owner);
+        try{
+            $property = $this->getOneByOwner($name, $owner);
+        }catch(PropertyNotExistsException $ex){
+            $property = null;
+        }
 
         if(null == $property && array_key_exists($name, $this->defaults)){
             $property = unserialize($this->defaults[$name]);
         }elseif($property instanceof \Trinity\Bundle\SettingsBundle\Entity\Setting){
             $property = $property->getValue();
+        }else{
+            throw new PropertyNotExistsException('Property \'' . $name . '\' doesn\'t exists.');
         }
 
         return $property;
@@ -147,12 +160,19 @@ class SettingsManager implements SettingsManagerInterface
      * @param $name
      * @param $owner
      * @return null|object|Setting
+     * @throws PropertyNotExistsException
      */
     protected function getOneByOwner($name, $owner){
         if($owner){
             $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name, "ownerId" => $owner]);
         }else{
             $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name]);
+        }
+
+        if(null == $property){
+            if(null === $property){
+                throw new PropertyNotExistsException('Property \'' . $name . '\' doesn\'t exists.');
+            }
         }
 
         return $property;
@@ -173,4 +193,19 @@ class SettingsManager implements SettingsManagerInterface
         return $properties;
     }
 
+
+    /**
+     * @param string $name
+     * @param int|null $owner
+     * @return bool
+     */
+    function has($name, $owner = null): bool
+    {
+        try{
+            $this->get($name, $owner);
+            return true;
+        }catch( PropertyNotExistsException $ex){
+            return false;
+        }
+    }
 }

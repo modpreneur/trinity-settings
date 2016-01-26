@@ -45,7 +45,7 @@ interface SettingsManagerInterface
 
 
     /**
-     * @param int|entity|null $owner int or entity with method 'getId()
+     * @param int $owner
      * @return void
      */
     function clear($owner = null);
@@ -57,5 +57,13 @@ interface SettingsManagerInterface
      * @return $this
      */
     function setDefault($name, $value);
+
+
+    /**
+     * @param string $name
+     * @param int|null $owner
+     * @return bool
+     */
+    function has($name, $owner = null): bool ;
 
 }

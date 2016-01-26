@@ -67,6 +67,34 @@ class SettingTest extends WebTestCase
 
         $settings->set('same', 2, 2);
         $this->assertEquals(2, $settings->get('same', 2));
+
+        $settings->set('null', 'not-null');
+        $this->assertEquals('not-null', $settings->get('null'));
+
+        $settings->set('null', null);
+        $this->assertEquals(null, $settings->get('null'));
+
+
+        $this->assertEquals(false, $settings->has('1111'));
+        $this->assertEquals(true, $settings->has('null'));
+
+        $settings->set('v', false);
+        $this->assertEquals(true, $settings->has('v'));
+
+        $settings->set('v', true);
+        $this->assertEquals(true, $settings->has('v'));
+    }
+
+
+    /**
+     * @expectedException \Trinity\Bundle\SettingsBundle\Exception\PropertyNotExistsException
+     * @expectedExceptionMessage Property 'not-exists-value' doesn't exists.
+     */
+    public function testExceptionForNonExistsValue(){
+        /** @var SettingsManager $settings */
+        $settings = $this->get( 'trinity.settings' );
+
+        $settings->get('not-exists-value');
     }
 
 

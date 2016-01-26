@@ -5,6 +5,7 @@
 
 namespace Trinity\Bundle\SettingsBundle\Twig;
 
+use Trinity\Bundle\SettingsBundle\Exception\PropertyNotExistsException;
 use Trinity\Bundle\SettingsBundle\Manager\SettingsManager;
 
 
@@ -43,10 +44,16 @@ class SettingsExtension extends \Twig_Extension
     /**
      * @param string $name
      * @param int|null $owner
-     * @return mixed
+     * @return mixed|null
      */
     public function getSettings($name, $owner = null){
-        return $this->settings->get($name, $owner);
+
+        try{
+            return $this->settings->get($name, $owner);
+        }catch( PropertyNotExistsException $ex ){
+            return null;
+        }
+
     }
 
 
