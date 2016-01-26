@@ -1,9 +1,16 @@
 services:
 
-    trinity_settings:
+    trinity.settings:
       class: Trinity\Bundle\SettingsBundle\Manager\SettingsManager
       arguments:
         - "@doctrine.orm.default_entity_manager"
+        - "@cache"
+
 
     trinity.settings.twig:
       class: Trinity\Bundle\SettingsBundle\Twig\SettingsExtension
+      arguments:
+        - "@trinity.settings"
+      public: false
+      tags:
+          - { name: twig.extension }
