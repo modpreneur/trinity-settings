@@ -35,12 +35,19 @@ class SettingsManager implements SettingsManagerInterface
     /**
      * SettingsManager constructor.
      * @param EntityManager $em
+     * @param array $settings
      * @param CacheProvider $cacheProvider
      */
-    public function __construct(EntityManager $em, CacheProvider $cacheProvider = null)
+    public function __construct(EntityManager $em, array $settings, CacheProvider $cacheProvider = null)
     {
         $this->em = $em;
         $this->cacheProvider = $cacheProvider;
+
+        if($settings){
+            foreach($settings as $name => $value){
+                $this->setDefault($name, $value);
+            }
+        }
     }
 
 

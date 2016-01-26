@@ -16,9 +16,6 @@ parameters:
     debug_redirects: false
     use_assetic_controller: true
 
-
-
-
 # Doctrine Configuration
 doctrine:
     dbal:
@@ -34,3 +31,8 @@ framework:
     test: ~
     session:
         storage_id: session.storage.filesystem
+
+settings:
+    defaults:
+        null_value: ~
+        sefik: "kure"

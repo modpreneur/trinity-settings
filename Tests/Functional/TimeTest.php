@@ -12,7 +12,7 @@ use Trinity\Bundle\SettingsBundle\Manager\SettingsManager;
 class TimeTest extends WebTestCase
 {
 
-    function  testSpeed(){
+    function  _testSpeed(){
 
         /** @var SettingsManager $settings */
         $settings = $this->get('trinity.settings');

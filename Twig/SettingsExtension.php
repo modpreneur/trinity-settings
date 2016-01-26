@@ -44,16 +44,24 @@ class SettingsExtension extends \Twig_Extension
     /**
      * @param string $name
      * @param int|null $owner
+     * @param string|int|boolnull $default
      * @return mixed|null
      */
-    public function getSettings($name, $owner = null){
+    public function getSettings($name, $owner = null, $default = null){
+
+        $value = null;
 
         try{
-            return $this->settings->get($name, $owner);
+            $value =  $this->settings->get($name, $owner);
         }catch( PropertyNotExistsException $ex ){
-            return null;
+            $value =  null;
         }
 
+        if(null == $value && null != $default){
+            $value = $default;
+        }
+
+        return $value;
     }
 
 
