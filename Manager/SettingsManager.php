@@ -5,6 +5,7 @@
 
 namespace Trinity\Bundle\SettingsBundle\Manager;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\ORM\EntityManager;
 use Trinity\Bundle\SettingsBundle\Entity\Setting;
 use Trinity\Bundle\SettingsBundle\Exception\PropertyNotExistsException;
@@ -22,16 +23,42 @@ class SettingsManager implements SettingsManagerInterface
      */
     protected $em;
 
-    /** @var array  */
+    /**
+     * @var CacheProvider
+     */
+    protected $cacheProvider;
+
+    /** @var array */
     protected $defaults = [];
+
 
     /**
      * SettingsManager constructor.
      * @param EntityManager $em
+     * @param CacheProvider $cacheProvider
      */
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManager $em, CacheProvider $cacheProvider = null)
     {
         $this->em = $em;
+        $this->cacheProvider = $cacheProvider;
+    }
+
+
+    /**
+     * @param CacheProvider $cacheProvider
+     */
+    public function setCacheProvider($cacheProvider)
+    {
+        $this->cacheProvider = $cacheProvider;
+    }
+
+
+    /**
+     * @return CacheProvider
+     */
+    public function getCacheProvider()
+    {
+        return $this->cacheProvider;
     }
 
 
@@ -43,18 +70,22 @@ class SettingsManager implements SettingsManagerInterface
      */
     function set($name, $value, $owner = null)
     {
-        try{
+        try {
             $item = $this->get($name, $owner);
-        }catch(PropertyNotExistsException $ex){
+        } catch (PropertyNotExistsException $ex) {
             $item = null;
         }
 
-        $nname = ($owner != null )? $name . '_' . $owner:$name;
+        $nname = ($owner != null) ? $name.'_'.$owner : $name;
 
-        if( !(array_key_exists($name, $this->defaults) && $this->defaults[$name] == $item) || $item != null){
-            $setting = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(['name' => $nname, 'ownerId' => $owner]);
-            if($setting == null) $setting = new Setting();
-        }else{
+        if (!(array_key_exists($name, $this->defaults) && $this->defaults[$name] == $item) || $item != null) {
+            $setting = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(
+                ['name' => $nname, 'ownerId' => $owner]
+            );
+            if ($setting == null) {
+                $setting = new Setting();
+            }
+        } else {
             $setting = new Setting();
         }
 
@@ -64,6 +95,10 @@ class SettingsManager implements SettingsManagerInterface
 
         $this->em->persist($setting);
         $this->em->flush($setting);
+
+        if ($this->cacheProvider) {
+            $this->cacheProvider->save($nname, serialize($setting));
+        }
 
         return $this;
     }
@@ -78,7 +113,7 @@ class SettingsManager implements SettingsManagerInterface
         $all = $this->findAllByOwner($owner);
         $rows = [];
 
-        foreach($all as $row){
+        foreach ($all as $row) {
             $rows[$row->getName()] = $this->get($row->getName());
         }
 
@@ -94,15 +129,16 @@ class SettingsManager implements SettingsManagerInterface
      */
     function get($name, $owner = null)
     {
-        if($owner) $name .= '_' . $owner;
+        if ($owner) { $name .= '_'.$owner; }
+
         $property = $this->getOneByOwner($name, $owner);
 
-        if(null == $property && array_key_exists($name, $this->defaults)){
+        if (null == $property && array_key_exists($name, $this->defaults)) {
             $property = unserialize($this->defaults[$name]);
-        }elseif($property instanceof \Trinity\Bundle\SettingsBundle\Entity\Setting){
+        } elseif ($property instanceof \Trinity\Bundle\SettingsBundle\Entity\Setting) {
             $property = $property->getValue();
-        }else{
-            throw new PropertyNotExistsException('Property \'' . $name . '\' doesn\'t exists.');
+        } else {
+            throw new PropertyNotExistsException('Property \''.$name.'\' doesn\'t exists.');
         }
 
         return $property;
@@ -116,7 +152,7 @@ class SettingsManager implements SettingsManagerInterface
      */
     function setMany(array $settings, $owner = null)
     {
-        foreach($settings as $name => $value){
+        foreach ($settings as $name => $value) {
             $this->set($name, $value, $owner);
         }
 
@@ -132,11 +168,15 @@ class SettingsManager implements SettingsManagerInterface
     {
         $rows = $this->findAllByOwner($owner);
 
-        foreach($rows as $row){
+        foreach ($rows as $row) {
             $this->em->remove($row);
         }
 
         $this->em->flush();
+
+        if ($this->cacheProvider) {
+            $this->cacheProvider->deleteAll();
+        }
     }
 
 
@@ -148,6 +188,7 @@ class SettingsManager implements SettingsManagerInterface
     function setDefault($name, $value)
     {
         $this->defaults[$name] = serialize($value);
+        $this->set($name, $value); // try..
     }
 
 
@@ -157,11 +198,22 @@ class SettingsManager implements SettingsManagerInterface
      * @return null|object|Setting
      * @throws PropertyNotExistsException
      */
-    protected function getOneByOwner($name, $owner){
-        if($owner){
-            $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name, "ownerId" => $owner]);
-        }else{
-            $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name]);
+    protected function getOneByOwner($name, $owner)
+    {
+        $property = null;
+
+        if ($this->cacheProvider) {
+            $property = unserialize($this->cacheProvider->fetch($name));
+        }
+
+        if (null == $property) {
+            if ($owner) {
+                $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(
+                    ["name" => $name, "ownerId" => $owner]
+                );
+            } else {
+                $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name]);
+            }
         }
 
         return $property;
@@ -172,10 +224,11 @@ class SettingsManager implements SettingsManagerInterface
      * @param $owner
      * @return array|\Trinity\Bundle\SettingsBundle\Entity\Setting[]
      */
-    protected function findAllByOwner($owner){
-        if($owner){
+    protected function findAllByOwner($owner)
+    {
+        if ($owner) {
             $properties = $this->em->getRepository('SettingsBundle:Setting')->findBy(["ownerId" => $owner]);
-        }else{
+        } else {
             $properties = $this->em->getRepository('SettingsBundle:Setting')->findAll();
         }
 
@@ -190,10 +243,11 @@ class SettingsManager implements SettingsManagerInterface
      */
     function has($name, $owner = null): bool
     {
-        try{
+        try {
             $this->get($name, $owner);
+
             return true;
-        }catch( PropertyNotExistsException $ex){
+        } catch (PropertyNotExistsException $ex) {
             return false;
         }
     }

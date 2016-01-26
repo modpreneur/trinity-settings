@@ -1,9 +1,13 @@
 services:
 
+    trinity.cache:
+      class: Doctrine\Common\Cache\ApcuCache
+
     trinity.settings:
       class: Trinity\Bundle\SettingsBundle\Manager\SettingsManager
       arguments:
         - "@doctrine.orm.default_entity_manager"
+        - "@trinity.cache"
 
     trinity.settings.twig:
       class: Trinity\Bundle\SettingsBundle\Twig\SettingsExtension
