@@ -73,12 +73,13 @@ class SettingsManager implements SettingsManagerInterface
      * @param string $name
      * @param mixed $value string, int, boolean, object, ...
      * @param int|entity|null $owner int or entity with method 'getId()'
+     * @param null|string $group
      * @return $this
      */
-    function set($name, $value, $owner = null)
+    function set($name, $value, $owner = null, $group = null)
     {
         try {
-            $item = $this->get($name, $owner);
+            $item = $this->get($name, $owner, $group);
         } catch (PropertyNotExistsException $ex) {
             $item = null;
         }
@@ -87,7 +88,7 @@ class SettingsManager implements SettingsManagerInterface
 
         if (!(array_key_exists($name, $this->defaults) && $this->defaults[$name] == $item) || $item != null) {
             $setting = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(
-                ['name' => $nname, 'ownerId' => $owner]
+                ['name' => $nname, 'ownerId' => $owner, 'group' => $group]
             );
             if ($setting == null) {
                 $setting = new Setting();
@@ -99,6 +100,7 @@ class SettingsManager implements SettingsManagerInterface
         $setting->setName($nname);
         $setting->setValue($value);
         $setting->setOwnerId($owner);
+        $setting->setGroup($group);
 
         $this->em->persist($setting);
         $this->em->flush($setting);
@@ -112,16 +114,18 @@ class SettingsManager implements SettingsManagerInterface
 
 
     /**
-     * @param int|entity|null $owner int or entity with method 'getId()'
+     * @param int|null $owner
+     * @param null $group
      * @return array
+     * @throws PropertyNotExistsException
      */
-    function all($owner = null)
+    function all($owner = null, $group = null)
     {
-        $all = $this->findAllByOwner($owner);
+        $all = $this->findAllByOwner($owner, $group);
         $rows = [];
 
         foreach ($all as $row) {
-            $rows[$row->getName()] = $this->get($row->getName());
+            $rows[$row->getName()] = $this->get($row->getName(), $owner, $group);
         }
 
         return $rows;
@@ -130,15 +134,16 @@ class SettingsManager implements SettingsManagerInterface
 
     /**
      * @param string $name
-     * @param int|entity|null $owner int or entity with method 'getId()'
+     * @param int|null $owner
+     * @param null|string $group
      * @return mixed
      * @throws PropertyNotExistsException
      */
-    function get($name, $owner = null)
+    function get($name, $owner = null, $group = null)
     {
         if ($owner) { $name .= '_'.$owner; }
 
-        $property = $this->getOneByOwner($name, $owner);
+        $property = $this->getOneByOwner($name, $owner, $group);
 
         if (null == $property && array_key_exists($name, $this->defaults)) {
             $property = unserialize($this->defaults[$name]);
@@ -154,13 +159,14 @@ class SettingsManager implements SettingsManagerInterface
 
     /**
      * @param array $settings
-     * @param int|entity|null $owner int or entity with method 'getId()'
+     * @param int|null $owner
+     * @param null|string $group
      * @return $this
      */
-    function setMany(array $settings, $owner = null)
+    function setMany(array $settings, $owner = null, $group = null)
     {
         foreach ($settings as $name => $value) {
-            $this->set($name, $value, $owner);
+            $this->set($name, $value, $owner, $group);
         }
 
         return $this;
@@ -168,12 +174,12 @@ class SettingsManager implements SettingsManagerInterface
 
 
     /**
-     * @param int|entity|null $owner int or entity with method 'getId()
-     * @return void
+     * @param int|null $owner
+     * @param null $group
      */
-    function clear($owner = null)
+    function clear($owner = null, $group = null)
     {
-        $rows = $this->findAllByOwner($owner);
+        $rows = $this->findAllByOwner($owner, $group);
 
         foreach ($rows as $row) {
             $this->em->remove($row);
@@ -200,12 +206,12 @@ class SettingsManager implements SettingsManagerInterface
 
 
     /**
-     * @param $name
-     * @param $owner
+     * @param string $name
+     * @param int $owner
+     * @param null|string $group
      * @return null|object|Setting
-     * @throws PropertyNotExistsException
      */
-    protected function getOneByOwner($name, $owner)
+    protected function getOneByOwner($name, $owner, $group = null)
     {
         $property = null;
 
@@ -215,10 +221,12 @@ class SettingsManager implements SettingsManagerInterface
 
         if (null == $property) {
             if ($owner) {
-                $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(
-                    ["name" => $name, "ownerId" => $owner]
-                );
-            } else {
+                $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy( ["name" => $name, "ownerId" => $owner] );
+            }elseif($group){
+                $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name, 'group' => $group]);
+            }elseif($group && $owner){
+                $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name, 'group' => $group, 'ownerId' => $owner]);
+            }else {
                 $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name]);
             }
         }
@@ -228,14 +236,19 @@ class SettingsManager implements SettingsManagerInterface
 
 
     /**
-     * @param $owner
+     * @param int|null $owner
+     * @param null|string $group
      * @return array|\Trinity\Bundle\SettingsBundle\Entity\Setting[]
      */
-    protected function findAllByOwner($owner)
+    protected function findAllByOwner($owner = null, $group = null)
     {
         if ($owner) {
             $properties = $this->em->getRepository('SettingsBundle:Setting')->findBy(["ownerId" => $owner]);
-        } else {
+        }elseif($group){
+            $properties = $this->em->getRepository('SettingsBundle:Setting')->findBy(["group" => $group]);
+        }elseif($owner && $group){
+            $properties = $this->em->getRepository('SettingsBundle:Setting')->findBy(["group" => $group, 'ownerId' => $owner]);
+        }else {
             $properties = $this->em->getRepository('SettingsBundle:Setting')->findAll();
         }
 
@@ -246,12 +259,13 @@ class SettingsManager implements SettingsManagerInterface
     /**
      * @param string $name
      * @param int|null $owner
+     * @param null|string $group
      * @return bool
      */
-    function has($name, $owner = null): bool
+    function has($name, $owner = null, $group = null): bool
     {
         try {
-            $this->get($name, $owner);
+            $this->get($name, $owner, $group);
 
             return true;
         } catch (PropertyNotExistsException $ex) {

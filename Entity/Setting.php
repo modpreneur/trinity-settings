@@ -49,6 +49,13 @@ class Setting
     private $ownerId;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="groupName", type="text", nullable=true)
+     */
+    private $group;
+
+    /**
      * Get id
      *
      * @return integer
@@ -123,4 +130,23 @@ class Setting
 
         return $this;
     }
+
+
+    /**
+     * @return string
+     */
+    public function getGroup()
+    {
+        return $this->group;
+    }
+
+
+    /**
+     * @param string $group
+     */
+    public function setGroup($group)
+    {
+        $this->group = $group;
+    }
+
 }

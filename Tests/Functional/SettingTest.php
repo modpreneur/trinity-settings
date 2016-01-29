@@ -87,6 +87,15 @@ class SettingTest extends WebTestCase
 
         $settings->set('v', true);
         $this->assertEquals(true, $settings->has('v'));
+
+
+        $settings->set('g', 'value', null, 'g');
+        $this->assertEquals(true, $settings->has('g', null, 'g'));
+        $this->assertEquals('value', $settings->get('g', null, 'g'));
+
+        $settings->set('gg', 'value', null, 'g');
+        $this->assertEquals(true, $settings->has('gg', null, 'g'));
+        $this->assertEquals('value', $settings->get('gg', null, 'g'));
     }
 
 

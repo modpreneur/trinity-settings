@@ -14,41 +14,45 @@ interface SettingsManagerInterface
 
     /**
      * @param string $name
-     * @param mixed $value  string, int, boolean, object, ...
-     * @param int|entity|null $owner int or entity with method 'getId()'
+     * @param mixed $value string, int, boolean, object, ...
+     * @param int|null $owner
+     * @param null|string $group
      * @return $this
      */
-    function set($name, $value, $owner = null);
+    function set($name, $value, $owner = null, $group = null);
 
 
     /**
-     * @param int|entity|null $owner int or entity with method 'getId()'
+     * @param int|null $owner int or entity with method 'getId()'
+     * @param null|string $group
      * @return array
      */
-    function all($owner = null);
+    function all($owner = null, $group = null);
 
 
     /**
      * @param string $name
-     * @param int|entity|null $owner int or entity with method 'getId()'
+     * @param int|null $owner
+     * @param null|string $group
      * @return mixed
      */
-    function get($name, $owner = null);
+    function get($name, $owner = null, $group = null);
 
 
     /**
      * @param array $settings
-     * @param int|entity|null $owner int or entity with method 'getId()'
+     * @param int|null $owner
+     * @param null|string $group
      * @return $this
      */
-    function setMany(array $settings, $owner = null);
+    function setMany(array $settings, $owner = null, $group = null);
 
 
     /**
      * @param int $owner
-     * @return void
+     * @param null|string $group
      */
-    function clear($owner = null);
+    function clear($owner = null, $group = null);
 
 
     /**
@@ -62,8 +66,9 @@ interface SettingsManagerInterface
     /**
      * @param string $name
      * @param int|null $owner
+     * @param null|string $group
      * @return bool
      */
-    function has($name, $owner = null): bool ;
+    function has($name, $owner = null, $group = null): bool;
 
 }
