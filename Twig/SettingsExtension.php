@@ -10,7 +10,7 @@ use Trinity\Bundle\SettingsBundle\Manager\SettingsManager;
 
 
 /**
- * Class SettingsExtension
+ * Class TrinitySettingsExtension
  * @package Trinity\Bundle\SettingsBundle\Twig
  */
 class SettingsExtension extends \Twig_Extension
@@ -21,7 +21,7 @@ class SettingsExtension extends \Twig_Extension
 
 
     /**
-     * SettingsExtension constructor.
+     * TrinitySettingsExtension constructor.
      * @param SettingsManager $settings
      */
     public function __construct(SettingsManager $settings)

@@ -12,10 +12,10 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 
 /**
- * Class SettingsExtension
+ * Class TrinitySettingsExtension
  * @package Trinity\Bundle\SettingsBundle\DependencyInjection
  */
-class SettingsExtension extends Extension
+class TrinitySettingsExtension extends Extension
 {
 
     /**

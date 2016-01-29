@@ -32,7 +32,7 @@ framework:
     session:
         storage_id: session.storage.filesystem
 
-settings:
-    defaults:
+trinity_settings:
+    settings:
         null_value: ~
         sefik: "kure"
