@@ -45,7 +45,8 @@ class SettingsManager implements SettingsManagerInterface
 
         if($settings){
             foreach($settings as $name => $value){
-                $this->setDefault($name, $value);
+                if(!$this->has($name))
+                    $this->setDefault($name, $value);
             }
         }
     }
