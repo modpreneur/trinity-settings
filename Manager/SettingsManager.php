@@ -151,7 +151,17 @@ class SettingsManager implements SettingsManagerInterface
         } elseif ($property instanceof \Trinity\Bundle\SettingsBundle\Entity\Setting) {
             $property = $property->getValue();
         } else {
-            throw new PropertyNotExistsException('Property \''.$name.'\' doesn\'t exists.');
+            $message = 'Property \''.$name.'\' doesn\'t exists. ';
+
+            if($owner){
+                $message .= 'Owner ID is: \'' . $owner . '\'. ' ;
+            }
+
+            if($group){
+                $message .= 'Group name is: \'' . $group . '\'. ' ;
+            }
+
+            throw new PropertyNotExistsException($message);
         }
 
         return $property;
