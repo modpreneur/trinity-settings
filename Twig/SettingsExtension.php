@@ -36,8 +36,8 @@ class SettingsExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('get_settings', [$this, 'getSettings']),
-            new \Twig_SimpleFunction('has_settings', [$this, 'hasSettings']),
+            new \Twig_SimpleFunction('get_setting', [$this, 'getSetting']),
+            new \Twig_SimpleFunction('has_setting', [$this, 'hasSetting']),
         ];
     }
 
@@ -49,7 +49,7 @@ class SettingsExtension extends \Twig_Extension
      * @param string|int|bool|null $default
      * @return mixed|null
      */
-    public function getSettings($name, $owner = null, $group = null, $default = null){
+    public function getSetting($name, $owner = null, $group = null, $default = null){
 
         $value = null;
 
@@ -73,7 +73,7 @@ class SettingsExtension extends \Twig_Extension
      * @param null|string $group
      * @return mixed|null
      */
-    public function hasSettings($name, $owner = null, $group = null){
+    public function hasSetting($name, $owner = null, $group = null){
         return $this->settings->has($name, $owner, $group);;
     }
 
