@@ -76,11 +76,7 @@ class SettingsManager implements SettingsManagerInterface
      */
     function set($name, $value, $owner = null, $group = null)
     {
-        try {
-            $item = $this->get($name, $owner, $group);
-        } catch (PropertyNotExistsException $ex) {
-            $item = null;
-        }
+
 
         $nname = ($owner != null) ? $name.'_'.$owner : $name;
 
