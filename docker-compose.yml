@@ -1,0 +1,4 @@
+rep:
+  build: .
+  volumes:
+    - .:/var/app
