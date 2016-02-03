@@ -76,7 +76,11 @@ class SettingsManager implements SettingsManagerInterface
      */
     function set($name, $value, $owner = null, $group = null)
     {
-
+        try {
+            $item = $this->get($name, $owner, $group);
+        } catch (PropertyNotExistsException $ex) {
+            $item = null;
+        }
 
         $nname = ($owner != null) ? $name.'_'.$owner : $name;
 
@@ -135,10 +139,6 @@ class SettingsManager implements SettingsManagerInterface
      */
     function get($name, $owner = null, $group = null)
     {
-        if(isset($this->settings[$name]) && !$this->has($name)){
-            $this->setDefault($name, $this->settings[$name]);
-        }
-
         if ($owner) { $name .= '_'.$owner; }
 
         $property = $this->getOneByOwner($name, $owner, $group);
@@ -148,6 +148,11 @@ class SettingsManager implements SettingsManagerInterface
         } elseif ($property instanceof \Trinity\Bundle\SettingsBundle\Entity\Setting) {
             $property = $property->getValue();
         } else {
+
+            if(isset($this->settings[$name])){
+                return $this->settings[$name];
+            }
+
             $message = 'Property \''.$name.'\' doesn\'t exists. ';
 
             if($owner){
