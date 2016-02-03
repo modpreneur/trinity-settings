@@ -32,6 +32,9 @@ class SettingsManager implements SettingsManagerInterface
     protected $defaults = [];
 
 
+    /** @var  [] */
+    protected $settings;
+
     /**
      * SettingsManager constructor.
      * @param EntityManager $em
@@ -42,13 +45,7 @@ class SettingsManager implements SettingsManagerInterface
     {
         $this->em = $em;
         $this->cacheProvider = $cacheProvider;
-
-        if($settings){
-            foreach($settings as $name => $value){
-                if(!$this->has($name))
-                    $this->setDefault($name, $value);
-            }
-        }
+        $this->settings = $settings;
     }
 
 
@@ -142,6 +139,10 @@ class SettingsManager implements SettingsManagerInterface
      */
     function get($name, $owner = null, $group = null)
     {
+        if(isset($this->settings[$name]) && !$this->has($name)){
+            $this->setDefault($name, $this->settings[$name]);
+        }
+
         if ($owner) { $name .= '_'.$owner; }
 
         $property = $this->getOneByOwner($name, $owner, $group);
