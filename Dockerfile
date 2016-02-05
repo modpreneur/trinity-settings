@@ -1,4 +1,4 @@
-FROM php:7-apache
+FROM php:7-cli
 
 MAINTAINER Martin Kolek <kolek@modpreneur.com>
 
@@ -19,12 +19,15 @@ RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list \
     && apt-get update
 
 RUN apt-get -y install \
-     sqlite3 \
-     libsqlite3-dev \
-     php7.0-sqlite3 \
-     phpunit
+    php7.0-cli \
+    sqlite3 \
+    libsqlite3-dev \
+    php7.0-sqlite3 \
+    phpunit
 
-RUN docker-php-ext-install curl zip mbstring opcache pdo_sqlite
+ADD docker/php.ini /usr/local/etc/php/
+
+RUN docker-php-ext-install curl zip mbstring opcache pdo pdo_sqlite
 
 # Install apcu
 RUN pecl install -o -f apcu-5.1.3 apcu_bc-beta \
@@ -34,7 +37,6 @@ RUN pecl install -o -f apcu-5.1.3 apcu_bc-beta \
     && docker-php-ext-configure bcmath \
     && docker-php-ext-install bcmath
 
-ADD docker/php.ini /usr/local/etc/php/
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php \
