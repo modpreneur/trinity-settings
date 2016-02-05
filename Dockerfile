@@ -20,6 +20,7 @@ RUN echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list \
 
 RUN apt-get -y install \
     php7.0-cli \
+    php7.0-apcu \
     sqlite3 \
     libsqlite3-dev \
     php7.0-sqlite3 \
@@ -27,16 +28,7 @@ RUN apt-get -y install \
 
 ADD docker/php.ini /usr/local/etc/php/
 
-RUN docker-php-ext-install curl zip mbstring opcache pdo pdo_sqlite
-
-# Install apcu
-RUN pecl install -o -f apcu-5.1.3 apcu_bc-beta \
-    && rm -rf /tmp/pear \
-    && echo "extension=apcu.so" > /usr/local/etc/php/conf.d/apcu.ini \
-    && echo "extension=apc.so" >> /usr/local/etc/php/conf.d/apcu.ini \
-    && docker-php-ext-configure bcmath \
-    && docker-php-ext-install bcmath
-
+RUN docker-php-ext-install curl zip mbstring opcache pdo_sqlite
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php \

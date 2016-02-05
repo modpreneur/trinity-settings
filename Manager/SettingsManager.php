@@ -46,6 +46,7 @@ class SettingsManager implements SettingsManagerInterface
         $this->em = $em;
         $this->cacheProvider = $cacheProvider;
         $this->settings = $settings;
+
     }
 
 
