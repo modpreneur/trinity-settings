@@ -46,7 +46,6 @@ class SettingsManager implements SettingsManagerInterface
         $this->em = $em;
         $this->cacheProvider = $cacheProvider;
         $this->settings = $settings;
-
     }
 
 
@@ -71,7 +70,7 @@ class SettingsManager implements SettingsManagerInterface
     /**
      * @param string $name
      * @param mixed $value string, int, boolean, object, ...
-     * @param int|entity|null $owner int or entity with method 'getId()'
+     * @param int $owner
      * @param null|string $group
      * @return $this
      */
@@ -151,6 +150,10 @@ class SettingsManager implements SettingsManagerInterface
         } else {
 
             if(isset($this->settings[$name])){
+                return $this->settings[$name];
+            }
+
+            if(isset($this->settings[$group . '.' . $name])){
                 return $this->settings[$name];
             }
 

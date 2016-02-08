@@ -32,3 +32,4 @@ trinity_settings:
     settings:
         null_value: ~
         sefik: "kure"
+        group.key: "value"
