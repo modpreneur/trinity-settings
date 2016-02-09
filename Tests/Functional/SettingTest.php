@@ -137,8 +137,6 @@ class SettingTest extends WebTestCase
      */
     public function testDidYouMeanSomething(){
 
-        var_dump(11);
-
         /** @var SettingsManager $settings */
         $settings = $this->get( 'trinity.settings' );
 
