@@ -149,12 +149,12 @@ class SettingsManager implements SettingsManagerInterface
             $property = $property->getValue();
         } else {
 
-            if(isset($this->settings[$name])){
+            if(array_key_exists($name, $this->settings)){
                 return $this->settings[$name];
             }
 
-            if(isset($this->settings[$group . '.' . $name])){
-                return $this->settings[$name];
+            if(array_key_exists($group . '.' . $name, $this->settings)){
+                return $this->settings[$group . '.' . $name];
             }
 
             $message = 'Property \''.$name.'\' doesn\'t exists. ';
@@ -167,7 +167,7 @@ class SettingsManager implements SettingsManagerInterface
                 $message .= 'Group name is: \'' . $group . '\'. ' ;
             }
 
-            throw new PropertyNotExistsException($message);
+            throw new PropertyNotExistsException($message . 'Available default values are \'' . join(', ', array_keys($this->settings)) .'\'');
         }
 
         return $property;
