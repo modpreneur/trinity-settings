@@ -133,17 +133,19 @@ class SettingTest extends WebTestCase
      * @throws \Trinity\Bundle\SettingsBundle\Exception\PropertyNotExistsException
      *
      * @expectedException \Trinity\Bundle\SettingsBundle\Exception\PropertyNotExistsException
-     * @expectedExceptionMessage Property 'aac' doesn't exists. Did you mean aaa
+     * @expectedExceptionMessage Property 'aac' doesn't exists. Did you mean aaa. Available properties are null_value, sefik, group.key, aaa, aab.
+     *
      */
     public function testDidYouMeanSomething(){
-
+;
         /** @var SettingsManager $settings */
         $settings = $this->get( 'trinity.settings' );
 
+        $settings->clear();
         $settings->set('aaa', 11);
         $settings->set('aab', 11);
 
-        $settings->get('aac');
+        ($settings->get('aac'));
     }
 
 }

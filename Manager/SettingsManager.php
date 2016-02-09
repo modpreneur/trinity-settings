@@ -168,8 +168,12 @@ class SettingsManager implements SettingsManagerInterface
             }
 
             $hint = join(', ', $this->getSuggestion($name));
+            $defaults = array_keys($this->settings);
+            $set = array_keys($this->all());
+            $items = join(', ', array_merge($defaults, $set));
 
-            throw new PropertyNotExistsException($message . 'Did you mean ' . $hint);
+
+            throw new PropertyNotExistsException($message . 'Did you mean ' . $hint . '. Available properties are ' . $items . '.');
         }
 
         return $property;
