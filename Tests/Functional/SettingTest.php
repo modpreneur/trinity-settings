@@ -128,6 +128,26 @@ class SettingTest extends WebTestCase
         $this->assertEquals( 'new value', $settings->get('default_value') );
     }
 
+
+    /**
+     * @throws \Trinity\Bundle\SettingsBundle\Exception\PropertyNotExistsException
+     *
+     * @expectedException \Trinity\Bundle\SettingsBundle\Exception\PropertyNotExistsException
+     * @expectedExceptionMessage Property 'aac' doesn't exists. Did you mean aaa
+     */
+    public function testDidYouMeanSomething(){
+
+        var_dump(11);
+
+        /** @var SettingsManager $settings */
+        $settings = $this->get( 'trinity.settings' );
+
+        $settings->set('aaa', 11);
+        $settings->set('aab', 11);
+
+        $settings->get('aac');
+    }
+
 }
 
 

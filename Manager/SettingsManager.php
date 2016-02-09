@@ -167,7 +167,9 @@ class SettingsManager implements SettingsManagerInterface
                 $message .= 'Group name is: \'' . $group . '\'. ' ;
             }
 
-            throw new PropertyNotExistsException($message . 'Available default values are \'' . join(', ', array_keys($this->settings)) .'\'');
+            $hint = join(', ', $this->getSuggestion($name));
+
+            throw new PropertyNotExistsException($message . 'Did you mean ' . $hint);
         }
 
         return $property;
@@ -288,5 +290,31 @@ class SettingsManager implements SettingsManagerInterface
         } catch (PropertyNotExistsException $ex) {
             return false;
         }
+    }
+
+    public function getSuggestion($value)
+    {
+
+        $defaults = array_keys($this->settings);
+        $set = array_keys($this->all());
+        $items = (array_merge($defaults, $set));
+
+        $norm = preg_replace($re = '#^(?=[A-Z])#', '', $value);
+        $best = [];
+        $min = (strlen($value) / 4 + 1) * 10 + .1;
+        foreach ($items as $item) {
+            if ($item !== $value && (($len = levenshtein($item, $value, 10, 11, 10)) < $min || ($len = levenshtein(
+                    preg_replace($re, '', $item),
+                    $norm,
+                    10,
+                    11,
+                    10
+                ) + 20) < $min)
+            ) {
+                $min = $len;
+                $best[] = $item;
+            }
+        }
+        return $best;
     }
 }
