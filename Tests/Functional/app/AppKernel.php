@@ -45,7 +45,6 @@ class AppKernel extends Kernel
             new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new \Symfony\Bundle\TwigBundle\TwigBundle(),
-            new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new \Trinity\Bundle\SettingsBundle\SettingsBundle(),
         );
     }
@@ -60,20 +59,14 @@ class AppKernel extends Kernel
     }
 
 
-    /**
-     * @return string
-     */
     public function getCacheDir()
     {
-        return __DIR__.'/./cache';
+        return dirname(__DIR__).'/var/cache/';
     }
 
-
-    /**
-     * @return string
-     */
     public function getLogDir()
     {
-        return __DIR__.'/./logs';
+        return dirname(__DIR__).'/var/logs';
     }
+
 }

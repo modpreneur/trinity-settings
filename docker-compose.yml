@@ -1,4 +1,4 @@
-rep:
+tests:
   build: .
   volumes:
     - .:/var/app

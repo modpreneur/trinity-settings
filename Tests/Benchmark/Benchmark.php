@@ -9,7 +9,7 @@ namespace Trinity\Bundle\SettingsBundle\Tests\Functional;
 use Trinity\Bundle\SettingsBundle\Manager\SettingsManager;
 
 
-class TimeTest extends WebTestCase
+class Benchmark extends WebTestCase
 {
 
     function  _testSpeed(){

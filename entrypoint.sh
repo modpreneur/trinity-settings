@@ -1,7 +1,7 @@
 #!/bin/bash sh
 
-mkdir -p Tests/Functional/app/cache
-rm -Rf Tests/Functional/app/cache/*
+php Tests/Functional/bin/console.php doctrine:database:create
+php Tests/Functionalbin/console.php doctrine:schema:update --force
 
 exec php entrypoint.php
 
