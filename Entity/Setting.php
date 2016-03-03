@@ -51,7 +51,7 @@ class Setting
     /**
      * @var string
      *
-     * @ORM\Column(name="group_name", type="text", nullable=true)
+     * @ORM\Column(name="group_name", length=64, nullable=true)
      */
     private $group;
 
