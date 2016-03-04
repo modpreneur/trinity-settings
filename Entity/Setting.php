@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(
  *  name="trinity_settings",
- *  uniqueConstraints={@ORM\UniqueConstraint(name="unique_name", columns={"name"}, options={"where": "(owner_id IS NULL) AND (group_name IS NULL)"} ), @ORM\UniqueConstraint(name="unique_name_owner_id", columns={"name", "owner_id"} ), @ORM\UniqueConstraint(name="unique_name_group", columns={"name", "group_name"} )}
+ *  uniqueConstraints={ @ORM\UniqueConstraint(name="unique_name_owner_id_group_name", columns={"name", "owner_id", "group_name"} ) }
  * )
  * @ORM\Entity
  */
