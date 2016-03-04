@@ -4,7 +4,7 @@ Bundle is used for storing Symfony parameters in database using Doctrine2 ORM.
 
 ##Installation
 
-#### 1. Add trinity/setting ty your composer.json
+### 1. Add trinity/setting ty your composer.json
 
     //composer.json
     {
@@ -17,7 +17,7 @@ Bundle is used for storing Symfony parameters in database using Doctrine2 ORM.
         //..
     }
 
-#### 2. Enable trinity/setting in the kernel:
+### 2. Enable trinity/setting in the kernel:
 
     <?php
     // app/AppKernel.php
@@ -34,8 +34,7 @@ Bundle is used for storing Symfony parameters in database using Doctrine2 ORM.
 
 ##Usages
 
-Set defaults variables:
----
+###Set defaults variables:
 
 config.yml
 
