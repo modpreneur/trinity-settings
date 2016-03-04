@@ -4,7 +4,7 @@ Bundle is used for storing Symfony parameters in database using Doctrine2 ORM.
 
 ##Installation
 
-### 1. Add trinity/setting ty your composer.json
+### 1. Add trinity/settings to your composer.json
 
     //composer.json
     {
@@ -17,7 +17,7 @@ Bundle is used for storing Symfony parameters in database using Doctrine2 ORM.
         //..
     }
 
-### 2. Enable trinity/setting in the kernel:
+### 2. Enable trinity/settings in the kernel:
 
     <?php
     // app/AppKernel.php
@@ -36,7 +36,7 @@ Bundle is used for storing Symfony parameters in database using Doctrine2 ORM.
 
 ###Set defaults variables:
 
-config.yml
+In some config.yml
 
     trinity_settings:
         settings:
@@ -48,8 +48,7 @@ config.yml
 Note: The dot is defined for group.
 
 
-In Controller:    
----
+### Usage in Controller:
    
     //Global Setting
     $this->get('trinity.settings')->set('parameter', $parameter);
@@ -66,8 +65,7 @@ In Controller:
     $this->get('trinity.settings')->get('parameter', $owner, $group);
     $this->get('trinity.settings')->has('parameter', $owner, $group);
     
-In Twig:
----
+###Usage In Twig:
     
     {{ get_setting('some_setting') }} 
     {{ get_setting('some_user_setting', app.user.id) }}
@@ -78,6 +76,3 @@ In Twig:
     {{ has_setting('some_user_setting', app.user.id) }}
     {{ has_setting('some_group_setting', null, 'MySettingGroup') }}
     {{ has_setting('some_user_group_setting', app.user.id, 'MySettingGroup') }}
-
-    
-    
