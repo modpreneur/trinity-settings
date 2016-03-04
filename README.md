@@ -1,6 +1,6 @@
 #Trinity Settings
 
-Bundle is used for storing Symfony parameters in database using Doctrine2 ORM.
+Bundle for storing Symfony parameters in database using Doctrine2 ORM and easy reach from Symfony Controller and twig.
 
 ##Installation
 
