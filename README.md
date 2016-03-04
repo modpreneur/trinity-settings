@@ -2,6 +2,35 @@
 
 Bundle is used for storing Symfony parameters in database using Doctrine2 ORM.
 
+##Installation
+
+#### 1. Add trinity/setting ty your composer.json
+
+    //composer.json
+    {
+        //..
+        "require": {
+            //..
+            "trinity/settings": "~1.0",
+            //..
+        }
+        //..
+    }
+
+#### 2. Enable trinity/setting in the kernel:
+
+    <?php
+    // app/AppKernel.php
+
+    public function registerBundles()
+    {
+        $bundles = array(
+            // ...
+            new \Trinity\Bundle\SettingsBundle\SettingsBundle(),
+            // ...
+        );
+    }
+
 
 ##Usages
 
@@ -27,8 +56,7 @@ In Controller:
     $this->get('trinity.settings')->set('parameter', $parameter);
     $this->get('trinity.settings')->get('parameter');
     $this->get('trinity.settings')->has('parameter');
-    
-    
+
     //User Setting
     $this->get('trinity.settings')->set('parameter', $parameter, $owner);
     $this->get('trinity.settings')->get('parameter', $owner);
