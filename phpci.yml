@@ -1,10 +1,9 @@
 setup:
-  success:
-      hipchat_notify:
-          authToken: c9c6d387ed457462e4adf42cf6670a
-          room: ModpreneurDev
-          message: <b>%PROJECT_TITLE%</b> - build <a href="%BUILD_URI%">%BUILD%</a>started!
-          color: red
+    hipchat_notify:
+        authToken: c9c6d387ed457462e4adf42cf6670a
+        room: ModpreneurDev
+        message: <b>%PROJECT_TITLE%</b> - build <a href="%BUILD_URI%">%BUILD%</a>started!
+        color: red
   composer:
     action: "install"
   
