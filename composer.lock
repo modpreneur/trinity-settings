@@ -6,7 +6,7 @@
     ],
     "hash": "d014ca4e3c7185cff8198b1eb7b78678",
     "content-hash": "0d33d7ab01e289c7de17fa583844abbd",
-    "packages": [
+    "packes": [
         {
             "name": "doctrine/annotations",
             "version": "v1.2.7",
