@@ -1,0 +1,19 @@
+build_settings:
+
+setup:
+  composer:
+    action: "install"
+
+test:
+  php_unit:
+    config:
+      - "phpunit.xml"
+    run_from:  "."
+
+  php_code_sniffer:
+    standard: "PSR2"
+    
+  php_mess_detector:
+    allow_failures: true  
+    
+complete:    
