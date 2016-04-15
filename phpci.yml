@@ -4,8 +4,8 @@ setup:
         room: ModpreneurDev
         message: <b>%PROJECT_TITLE%</b> - build <a href="%BUILD_URI%">%BUILD%</a>started!
         color: red
-  composer:
-    action: "install"
+    composer:
+        action: "install"
   
 
 test:
