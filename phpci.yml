@@ -9,13 +9,7 @@ test:
     config:
       - "phpunit.xml"
     run_from:  "."
-
-  php_code_sniffer:
-    standard: "PSR2"
-    
-  php_mess_detector:
-    allow_failures: true  
-    
+ 
 complete:   
 
 hipchat_notify:
