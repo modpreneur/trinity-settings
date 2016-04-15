@@ -16,4 +16,11 @@ test:
   php_mess_detector:
     allow_failures: true  
     
-complete:    
+complete:   
+
+hipchat_notify:
+    authToken: c9c6d387ed457462e4adf42cf6670a
+    room: 1679510
+    message: '<b>%PROJECT_TITLE%</b> - build <a href="%BUILD_URI%">%BUILD%</a> $
+    color: red
+    notify: true
