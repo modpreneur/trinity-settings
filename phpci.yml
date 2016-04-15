@@ -1,13 +1,29 @@
-build_settings:
-
 setup:
   composer:
     action: "install"
 
 test:
-  php_unit:
-    config:
-      - "phpunit.xml"
-    run_from:  "."
+    php_code_sniffer:
+        path: "."
+        ignore:
+            - "Tests"
+        standard: "PSR1,PSR2"
+
+    php_unit:
+        config:
+          - "phpunit.xml"
+        run_from:  "."
+
+success:
+    hipchat_notify:
+        authToken: c9c6d387ed457462e4adf42cf6670a
+        room: ModpreneurDev
+        message: <b>%PROJECT_TITLE%</b> - build <a href="%BUILD_URI%">%BUILD%</a>SUCCEEDED!
+        color: red
  
-complete:   
+failure:
+    hipchat_notify:
+        authToken: c9c6d387ed457462e4adf42cf6670a
+        room: ModpreneurDev
+        message: <b>%PROJECT_TITLE%</b> - build <a href="%BUILD_URI%">%BUILD%</a>FAILED!
+        color: red
