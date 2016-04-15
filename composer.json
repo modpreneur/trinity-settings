@@ -10,7 +10,7 @@
     }
   ],
 
-  "rrrrequire": {
+  "require": {
     "php": ">=7",
     "doctrine/orm": "~2.5",
     "symfony/http-kernel": "~2.8|~3.0",
