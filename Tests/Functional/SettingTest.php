@@ -22,9 +22,7 @@ class SettingTest extends WebTestCase
         // settings.defaults:
         $this->assertEquals('kure', $settings->get('sefik'));
         $this->assertEquals(null, $settings->get('null_value'));
-        
-        $this->assertEquals(1,2);
-
+    
         $settings->set('string_abc', 'abc');
         $this->assertEquals('abc', $settings->get('string_abc'));
 
