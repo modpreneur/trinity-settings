@@ -9,12 +9,6 @@ setup:
   
 
 test:
-    php_code_sniffer:
-        path: "."
-        ignore:
-            - "Tests"
-        standard: "PSR1,PSR2"
-
     php_unit:
         config:
           - "phpunit.xml"
