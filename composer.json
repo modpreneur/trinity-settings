@@ -48,7 +48,7 @@
 
   "archive": {
     "exclude": ["/docker", "/Tests", "docker-compose.yml", "Dockerfile", "entrypoint.php", "entrypoint.sh", "phpunit.xml"]
-  },
+  }
   
  
   
