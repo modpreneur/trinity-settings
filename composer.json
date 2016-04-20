@@ -48,14 +48,6 @@
 
   "archive": {
     "exclude": ["/docker", "/Tests", "docker-compose.yml", "Dockerfile", "entrypoint.php", "entrypoint.sh", "phpunit.xml"]
-  },
-   "scripts": {
-    "post-update-cmd": [
-        "php Tests/Functional/bin/console.php doctrine:schema:update --force"
-    ],
-    "post-install-cmd": [
-        "php Tests/Functional/bin/console.php doctrine:schema:update --force"
-    ]
   }
   
  
