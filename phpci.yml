@@ -15,14 +15,7 @@ test:
         ignore:
           - "vendor"
           - "Tests"
-          
-    php_cs_fixer:
-        verbose: true
-        diff: true
-        level: "psr2"
-        workingdir: "."      
-
-
+  
 complete:
     clean_build:
         remove:
