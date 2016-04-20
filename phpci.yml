@@ -8,6 +8,13 @@ test:
         config:
           - "phpunit.xml"
         run_from:  "."
+        
+     php_code_sniffer:
+        path: "."
+        ignore:
+            - "docker"
+            - "Tests"
+        standard: "PSR1,PSR2"    
 
 
 complete:
