@@ -9,7 +9,7 @@ test:
           - "phpunit.xml"
         run_from:  "."
         
-     php_code_sniffer:
+    php_code_sniffer:
         path: "."
         ignore:
             - "docker"
