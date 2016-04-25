@@ -236,25 +236,30 @@ class SettingsManager implements SettingsManagerInterface
      */
     protected function getOneByOwner($name, $owner, $group = null)
     {
-        $property = null;
-
-        if ($this->cacheProvider) {
-            $property = unserialize($this->cacheProvider->fetch($name));
-        }
-
-        if (null == $property) {
-            if ($owner) {
-                $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy( ["name" => $name, "ownerId" => $owner] );
-            }elseif($group){
-                $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name, 'group' => $group]);
-            }elseif($group && $owner){
-                $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name, 'group' => $group, 'ownerId' => $owner]);
-            }else {
-                $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name]);
+        try{
+            $property = null;
+    
+            if ($this->cacheProvider) {
+                $property = unserialize($this->cacheProvider->fetch($name));
             }
-        }
-
-        return $property;
+    
+            if (null == $property) {
+                if ($owner) {
+                    $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy( ["name" => $name, "ownerId" => $owner] );
+                }elseif($group){
+                    $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name, 'group' => $group]);
+                }elseif($group && $owner){
+                    $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name, 'group' => $group, 'ownerId' => $owner]);
+                }else {
+                    $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name]);
+                }
+            }
+    
+            return $property;
+        }catch(\Exception $ex){
+            // -- build error  - select - no table
+            return null;
+        }    
     }
 
 
