@@ -9,25 +9,8 @@ setup:
         action: "install"
         prefer_dist: true
 
-
-
 test:
     php_unit:
         config:
           - "phpunit.xml"
         run_from:  "."
-
-    php_cpd:
-         standard: "PSR2"
-         path: "."
-         ignore:
-            - "vendor"
-            - "Tests"
-    php_mess_detector:
-        allow_failures: true
-
-    php_code_sniffer:
-        standard: "PSR2"
-
-    php_cpd:
-        allow_failures: true
