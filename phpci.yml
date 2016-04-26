@@ -1,6 +1,8 @@
 setup:
     composer:
         action: "install"
+        prefer_dist: true
+
   
 
 test:
@@ -17,10 +19,5 @@ test:
           - "Tests"
   
 complete:
-    clean_build:
-        remove:
-            - composer.json
-            - composer.phar
-            - config.dev.php        
-        
+
 
