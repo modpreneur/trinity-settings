@@ -1,7 +1,4 @@
 setup:
-    composer:
-        action: "install"
-        prefer_dist: true
-
-  
-
+  composer:
+    action: "install"
+    prefer_dist: true
