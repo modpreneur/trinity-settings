@@ -10,9 +10,9 @@ use Doctrine\ORM\EntityManager;
 use Trinity\Bundle\SettingsBundle\Entity\Setting;
 use Trinity\Bundle\SettingsBundle\Exception\PropertyNotExistsException;
 
-
 /**
  * Class SettingsManager
+ *
  * @package Trinity\Bundle\SettingsBundle\Manager
  */
 class SettingsManager implements SettingsManagerInterface
@@ -74,7 +74,7 @@ class SettingsManager implements SettingsManagerInterface
      * @param null|string $group
      * @return $this
      */
-    function set($name, $value, $owner = null, $group = null)
+    public function set($name, $value, $owner = null, $group = null)
     {
         try {
             $item = $this->get($name, $owner, $group);
@@ -82,13 +82,13 @@ class SettingsManager implements SettingsManagerInterface
             $item = null;
         }
 
-        $nname = ($owner != null) ? $name.'_'.$owner : $name;
+        $nname = (null !== $owner) ? $name.'_'.$owner : $name;
 
-        if (!(array_key_exists($name, $this->defaults) && $this->defaults[$name] == $item) || $item != null) {
+        if (null !== $item || !(array_key_exists($name, $this->defaults) && $this->defaults[$name] === $item)) {
             $setting = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(
                 ['name' => $nname, 'ownerId' => $owner, 'group' => $group]
             );
-            if ($setting == null) {
+            if (null === $setting) {
                 $setting = new Setting();
             }
         } else {
@@ -117,7 +117,7 @@ class SettingsManager implements SettingsManagerInterface
      * @return array
      * @throws PropertyNotExistsException
      */
-    function all($owner = null, $group = null)
+    public function all($owner = null, $group = null)
     {
         $all = $this->findAllByOwner($owner, $group);
         $rows = [];
@@ -137,43 +137,46 @@ class SettingsManager implements SettingsManagerInterface
      * @return mixed
      * @throws PropertyNotExistsException
      */
-    function get($name, $owner = null, $group = null)
+    public function get($name, $owner = null, $group = null)
     {
-        if ($owner) { $name .= '_'.$owner; }
+        if ($owner) {
+            $name .= '_'.$owner;
+        }
 
         $property = $this->getOneByOwner($name, $owner, $group);
 
-        if (null == $property && array_key_exists($name, $this->defaults)) {
+        if (null === $property && array_key_exists($name, $this->defaults)) {
             $property = unserialize($this->defaults[$name]);
-        } elseif ($property instanceof \Trinity\Bundle\SettingsBundle\Entity\Setting) {
+        } elseif ($property instanceof Setting) {
             $property = $property->getValue();
         } else {
-
-            if(array_key_exists($name, $this->settings)){
+            if (array_key_exists($name, $this->settings)) {
                 return $this->settings[$name];
             }
 
-            if(array_key_exists($group . '.' . $name, $this->settings)){
+            if (array_key_exists($group . '.' . $name, $this->settings)) {
                 return $this->settings[$group . '.' . $name];
             }
 
             $message = 'Property \''.$name.'\' doesn\'t exists. ';
 
-            if($owner){
+            if ($owner) {
                 $message .= 'Owner ID is: \'' . $owner . '\'. ' ;
             }
 
-            if($group){
+            if ($group) {
                 $message .= 'Group name is: \'' . $group . '\'. ' ;
             }
 
-            $hint = join(', ', $this->getSuggestion($name));
+            $hint = implode(', ', $this->getSuggestion($name));
             $defaults = array_keys($this->settings);
             $set = array_keys($this->all());
-            $items = join(', ', array_merge($defaults, $set));
+            $items = implode(', ', array_merge($defaults, $set));
 
 
-            throw new PropertyNotExistsException($message . 'Did you mean ' . $hint . '. Available properties are ' . $items . '.');
+            throw new PropertyNotExistsException(
+                $message . 'Did you mean ' . $hint . '. Available properties are ' . $items . '.'
+            );
         }
 
         return $property;
@@ -186,7 +189,7 @@ class SettingsManager implements SettingsManagerInterface
      * @param null|string $group
      * @return $this
      */
-    function setMany(array $settings, $owner = null, $group = null)
+    public function setMany(array $settings, $owner = null, $group = null)
     {
         foreach ($settings as $name => $value) {
             $this->set($name, $value, $owner, $group);
@@ -200,7 +203,7 @@ class SettingsManager implements SettingsManagerInterface
      * @param int|null $owner
      * @param null $group
      */
-    function clear($owner = null, $group = null)
+    public function clear($owner = null, $group = null)
     {
         $rows = $this->findAllByOwner($owner, $group);
 
@@ -221,12 +224,11 @@ class SettingsManager implements SettingsManagerInterface
      * @param string $value
      * @return $this
      */
-    function setDefault($name, $value)
+    public function setDefault($name, $value)
     {
         $this->defaults[$name] = serialize($value);
         $this->set($name, $value); // try..
     }
-
 
     /**
      * @param string $name
@@ -236,32 +238,36 @@ class SettingsManager implements SettingsManagerInterface
      */
     protected function getOneByOwner($name, $owner, $group = null)
     {
-        try{
-            $property = null;
-    
-            if ($this->cacheProvider) {
-                $property = unserialize($this->cacheProvider->fetch($name));
-            }
-    
-            if (null == $property) {
-                if ($owner) {
-                    $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy( ["name" => $name, "ownerId" => $owner] );
-                }elseif($group){
-                    $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name, 'group' => $group]);
-                }elseif($group && $owner){
-                    $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name, 'group' => $group, 'ownerId' => $owner]);
-                }else {
-                    $property = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(["name" => $name]);
-                }
-            }
-    
-            return $property;
-        }catch(\Exception $ex){
-            // -- build error  - select - no table
-            return null;
-        }    
-    }
+        $property = null;
 
+        if ($this->cacheProvider) {
+            $property = unserialize($this->cacheProvider->fetch($name));
+        }
+
+        if (null === $property) {
+            try {
+                if ($owner) {
+                    $property = $this->em->getRepository('SettingsBundle:Setting')
+                        ->findOneBy(['name' => $name, 'ownerId' => $owner]);
+                } elseif ($group) {
+                    $property = $this->em->getRepository('SettingsBundle:Setting')
+                        ->findOneBy(['name' => $name, 'group' => $group]);
+                } elseif ($group && $owner) {
+                    $property = $this->em->getRepository('SettingsBundle:Setting')
+                        ->findOneBy(['name' => $name, 'group' => $group, 'ownerId' => $owner]);
+                } else {
+                    $property = $this->em->getRepository('SettingsBundle:Setting')
+                        ->findOneBy(['name' => $name]);
+                }
+            } catch (\Exception $ex) {
+                // -- build error  - select - no table
+                return null;
+            }
+        }
+
+        return $property;
+    }
+    
 
     /**
      * @param int|null $owner
@@ -271,18 +277,20 @@ class SettingsManager implements SettingsManagerInterface
     protected function findAllByOwner($owner = null, $group = null)
     {
         if ($owner) {
-            $properties = $this->em->getRepository('SettingsBundle:Setting')->findBy(["ownerId" => $owner]);
-        }elseif($group){
-            $properties = $this->em->getRepository('SettingsBundle:Setting')->findBy(["group" => $group]);
-        }elseif($owner && $group){
-            $properties = $this->em->getRepository('SettingsBundle:Setting')->findBy(["group" => $group, 'ownerId' => $owner]);
-        }else {
+            $properties = $this->em->getRepository('SettingsBundle:Setting')->findBy(['ownerId' => $owner]);
+        } elseif ($group) {
+            $properties = $this->em->getRepository('SettingsBundle:Setting')->findBy(['group' => $group]);
+        } elseif ($owner && $group) {
+            $properties = $this->em->getRepository('SettingsBundle:Setting')
+                ->findBy(['group' => $group, 'ownerId' => $owner]);
+        } else {
             $properties = $this->em->getRepository('SettingsBundle:Setting')->findAll();
         }
 
         return $properties;
     }
 
+    
 
     /**
      * @param string $name
@@ -290,7 +298,7 @@ class SettingsManager implements SettingsManagerInterface
      * @param null|string $group
      * @return bool
      */
-    function has($name, $owner = null, $group = null): bool
+    public function has($name, $owner = null, $group = null): bool
     {
         try {
             $this->get($name, $owner, $group);
@@ -301,24 +309,27 @@ class SettingsManager implements SettingsManagerInterface
         }
     }
 
+    /**
+     * @param string $value
+     * @return array
+     * @throws \Trinity\Bundle\SettingsBundle\Exception\PropertyNotExistsException
+     */
     public function getSuggestion($value)
     {
-
         $defaults = array_keys($this->settings);
         $set = array_keys($this->all());
-        $items = (array_merge($defaults, $set));
+        /** @var array $items */
+        $items = array_merge($defaults, $set);
 
         $norm = preg_replace($re = '#^(?=[A-Z])#', '', $value);
         $best = [];
         $min = (strlen($value) / 4 + 1) * 10 + .1;
         foreach ($items as $item) {
-            if ($item !== $value && (($len = levenshtein($item, $value, 10, 11, 10)) < $min || ($len = levenshtein(
-                    preg_replace($re, '', $item),
-                    $norm,
-                    10,
-                    11,
-                    10
-                ) + 20) < $min)
+            if ($item !== $value
+                && (
+                    ($len = levenshtein($item, $value, 10, 11, 10)) < $min
+                    || ($len = levenshtein(preg_replace($re, '', $item), $norm, 10, 11, 10) + 20) < $min
+                )
             ) {
                 $min = $len;
                 $best[] = $item;

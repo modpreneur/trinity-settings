@@ -8,7 +8,6 @@ namespace Trinity\Bundle\SettingsBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-
 /**
  * Class Configuration
  * @package Trinity\DependencyInjection
@@ -26,7 +25,6 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('trinity_settings');
 
-        $scopes = [];
         $rootNode
             ->children()
                 ->arrayNode('settings')
@@ -34,7 +32,7 @@ class Configuration implements ConfigurationInterface
                     ->isRequired(true)
                     ->end()
                 ->end()
-            ->end();
+            ->end()
         ;
 
         return $treeBuilder;
