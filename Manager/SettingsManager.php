@@ -73,6 +73,8 @@ class SettingsManager implements SettingsManagerInterface
      * @param int $owner
      * @param null|string $group
      * @return $this
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
      */
     public function set($name, $value, $owner = null, $group = null)
     {
@@ -188,6 +190,8 @@ class SettingsManager implements SettingsManagerInterface
      * @param int|null $owner
      * @param null|string $group
      * @return $this
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
      */
     public function setMany(array $settings, $owner = null, $group = null)
     {
@@ -202,6 +206,8 @@ class SettingsManager implements SettingsManagerInterface
     /**
      * @param int|null $owner
      * @param null $group
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
     public function clear($owner = null, $group = null)
     {
@@ -223,6 +229,8 @@ class SettingsManager implements SettingsManagerInterface
      * @param string $name
      * @param string $value
      * @return $this
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
      */
     public function setDefault($name, $value)
     {
@@ -230,6 +238,7 @@ class SettingsManager implements SettingsManagerInterface
         $this->set($name, $value); // try..
     }
 
+    
     /**
      * @param string $name
      * @param int $owner
@@ -289,9 +298,8 @@ class SettingsManager implements SettingsManagerInterface
 
         return $properties;
     }
-
     
-
+    
     /**
      * @param string $name
      * @param int|null $owner
@@ -309,6 +317,7 @@ class SettingsManager implements SettingsManagerInterface
         }
     }
 
+    
     /**
      * @param string $value
      * @return array

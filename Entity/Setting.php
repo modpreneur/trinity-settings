@@ -12,7 +12,9 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(
  *  name="trinity_settings",
- *  uniqueConstraints={ @ORM\UniqueConstraint(name="unique_name_owner_id_group_name", columns={"name", "owner_id", "group_name"} ) }
+ *  uniqueConstraints={
+ *     @ORM\UniqueConstraint(name="unique_name_owner_id_group_name", columns={"name", "owner_id", "group_name"} )
+ *     }
  * )
  * @ORM\Entity
  */
@@ -148,5 +150,4 @@ class Setting
     {
         $this->group = $group;
     }
-
 }

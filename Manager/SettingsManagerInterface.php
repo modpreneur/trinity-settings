@@ -19,7 +19,7 @@ interface SettingsManagerInterface
      * @param null|string $group
      * @return $this
      */
-    function set($name, $value, $owner = null, $group = null);
+    public function set($name, $value, $owner = null, $group = null);
 
 
     /**
@@ -27,7 +27,7 @@ interface SettingsManagerInterface
      * @param null|string $group
      * @return array
      */
-    function all($owner = null, $group = null);
+    public function all($owner = null, $group = null);
 
 
     /**
@@ -36,7 +36,7 @@ interface SettingsManagerInterface
      * @param null|string $group
      * @return mixed
      */
-    function get($name, $owner = null, $group = null);
+    public function get($name, $owner = null, $group = null);
 
 
     /**
@@ -45,14 +45,14 @@ interface SettingsManagerInterface
      * @param null|string $group
      * @return $this
      */
-    function setMany(array $settings, $owner = null, $group = null);
+    public function setMany(array $settings, $owner = null, $group = null);
 
 
     /**
      * @param int $owner
      * @param null|string $group
      */
-    function clear($owner = null, $group = null);
+    public function clear($owner = null, $group = null);
 
 
     /**
@@ -60,7 +60,7 @@ interface SettingsManagerInterface
      * @param string $value
      * @return $this
      */
-    function setDefault($name, $value);
+    public function setDefault($name, $value);
 
 
     /**
@@ -69,6 +69,5 @@ interface SettingsManagerInterface
      * @param null|string $group
      * @return bool
      */
-    function has($name, $owner = null, $group = null): bool;
-
+    public function has($name, $owner = null, $group = null): bool;
 }
