@@ -16,13 +16,18 @@ use Trinity\Bundle\SettingsBundle\Entity\Setting;
 class DataSet
 {
 
-    public function load(EntityManager $entityManager){
-
-        $faker = Factory::create();;
+    /**
+     * @param EntityManager $entityManager
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function load(EntityManager $entityManager)
+    {
+        $faker = Factory::create();
 
         $count = 10;
 
-        for($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; $i++) {
             $setting = new Setting();
             $setting->setName($faker->unique()->word);
             $setting->setValue($faker->word);
@@ -31,5 +36,4 @@ class DataSet
 
         $entityManager->flush();
     }
-
 }

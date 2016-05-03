@@ -238,7 +238,7 @@ class SettingsManager implements SettingsManagerInterface
         $this->set($name, $value); // try..
     }
 
-    
+
     /**
      * @param string $name
      * @param int $owner
@@ -253,7 +253,7 @@ class SettingsManager implements SettingsManagerInterface
             $property = unserialize($this->cacheProvider->fetch($name));
         }
 
-        if (null === $property) {
+        if (null === $property || false === $property) {
             try {
                 if ($owner) {
                     $property = $this->em->getRepository('SettingsBundle:Setting')
@@ -276,7 +276,7 @@ class SettingsManager implements SettingsManagerInterface
 
         return $property;
     }
-    
+
 
     /**
      * @param int|null $owner
@@ -298,8 +298,8 @@ class SettingsManager implements SettingsManagerInterface
 
         return $properties;
     }
-    
-    
+
+
     /**
      * @param string $name
      * @param int|null $owner
@@ -317,7 +317,7 @@ class SettingsManager implements SettingsManagerInterface
         }
     }
 
-    
+
     /**
      * @param string $value
      * @return array

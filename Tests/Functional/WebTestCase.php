@@ -5,10 +5,10 @@
 
 namespace Trinity\Bundle\SettingsBundle\Tests\Functional;
 
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Console\Application as App;
 use Symfony\Component\Console\Input\StringInput;
 use Trinity\Bundle\SettingsBundle\Tests\TestCase;
-
 
 /**
  * Class WebTestCase
@@ -29,25 +29,26 @@ class WebTestCase extends TestCase
 
     protected function init()
     {
-
         if (self::$isInit === false) {
-
             exec('php bin/console.php doctrine:database:drop --force');
             exec('php bin/console.php doctrine:schema:create');
             exec('php bin/console.php doctrine:schema:update --force');
 
-            $kernel = $this->createClient()->getKernel();
+            $kernel = static::createClient()->getKernel();
             $container = $kernel->getContainer();
+            /** @var EntityManager $em */
             $em = $container->get('doctrine.orm.default_entity_manager');
 
             $data = new DataSet();
             $data->load($em);
         }
-
         self::$isInit = true;
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     public function setUp()
     {
         parent::setUp();
@@ -87,13 +88,13 @@ class WebTestCase extends TestCase
     /**
      * @param string $serviceName
      * @return object
+     * @throws \Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException
+     * @throws \Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException
      */
     protected function get($serviceName)
     {
-        $kernel = $this->createClient()->getKernel();
+        $kernel = static::createClient()->getKernel();
         $container = $kernel->getContainer();
-
         return $container->get($serviceName);
     }
-
 }

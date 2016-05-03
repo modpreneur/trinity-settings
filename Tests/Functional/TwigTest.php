@@ -15,8 +15,8 @@ use Trinity\Bundle\SettingsBundle\Manager\SettingsManager;
 class TwigTest extends WebTestCase
 {
 
-    function testTwigFunction(){
-
+    public function testTwigFunction()
+    {
         /** @var \Twig_Environment $twig */
         $twig = $this->get('twig');
         $twig->setLoader(new \Twig_Loader_Filesystem(__DIR__ . '/template'));
@@ -28,7 +28,6 @@ class TwigTest extends WebTestCase
         $settings->set('twíg_variable', 'value');
 
         $output = $template->render([]);
-        $this->assertEquals('Twig text: value', $output);
+        static::assertEquals('Twig text: value', $output);
     }
-
 }
