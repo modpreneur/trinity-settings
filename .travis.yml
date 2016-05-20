@@ -2,8 +2,9 @@ language: php
 php:
   - '7.0'
   
-before_script: composer install
+before_script: 
+  - phpenv config-add travis.ini
+  - composer install
 
 script: phpunit
 
-extension = "apcu.so"
