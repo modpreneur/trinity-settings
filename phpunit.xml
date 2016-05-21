@@ -34,9 +34,10 @@
 
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory>SettingsBundle</directory>
+            <directory>./</directory>
             <exclude>
-                <directory suffix=".php">Tests</directory>
+                <directory>Tests/</directory>
+                <directory>vendor/</directory>
             </exclude>
         </whitelist>
     </filter>
