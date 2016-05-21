@@ -25,8 +25,7 @@ notifications:
 
 
 after_success:
-  - sh -c 'php vendor/bin/coveralls -v; fi;'
-
+  - sh -c 'php vendor/bin/coveralls -v'
 
 
 cache:
