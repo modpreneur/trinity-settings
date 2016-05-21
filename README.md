@@ -3,6 +3,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/modpreneur/trinity-settings/badge.svg?branch=master)](https://coveralls.io/github/modpreneur/trinity-settings?branch=master)
 [![Build Status](https://travis-ci.org/modpreneur/trinity-settings.svg?branch=master)](https://travis-ci.org/modpreneur/trinity-settings)
 
+
 Bundle for storing Symfony parameters in database using Doctrine2 ORM and easy reach from Symfony Controller and twig.
 
 ##Installation
