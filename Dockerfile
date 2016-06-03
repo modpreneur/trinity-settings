@@ -1,4 +1,4 @@
-FROM modpreneur/trinity-test:0.1.1
+FROM modpreneur/trinity-test
 
 MAINTAINER Martin Kolek <kolek@modpreneur.com>
 
@@ -8,7 +8,6 @@ ADD . /var/app
 WORKDIR /var/app
 
 
-
 RUN chmod +x entrypoint.sh
 
-ENTRYPOINT ["sh", "entrypoint.sh", "service postfix start"]
+ENTRYPOINT ["sh", "entrypoint.sh"]
