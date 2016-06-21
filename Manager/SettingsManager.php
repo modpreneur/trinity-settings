@@ -224,6 +224,9 @@ class SettingsManager implements SettingsManagerInterface
     }
 
 
+    /**
+     * Delete all in cache provider
+     */
     public function clearCacheProvider()
     {
         if ($this->cacheProvider) {
