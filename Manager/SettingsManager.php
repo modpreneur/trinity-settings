@@ -35,6 +35,7 @@ class SettingsManager implements SettingsManagerInterface
     /** @var  [] */
     protected $settings;
 
+
     /**
      * SettingsManager constructor.
      * @param EntityManager $em
@@ -84,7 +85,7 @@ class SettingsManager implements SettingsManagerInterface
             $item = null;
         }
 
-        $nname = (null !== $owner) ? $name.'_'.$owner : $name;
+        $nname = (null !== $owner) ? $name . '_' . $owner : $name;
 
         if (null !== $item || !(array_key_exists($name, $this->defaults) && $this->defaults[$name] === $item)) {
             $setting = $this->em->getRepository('SettingsBundle:Setting')->findOneBy(
@@ -142,7 +143,7 @@ class SettingsManager implements SettingsManagerInterface
     public function get($name, $owner = null, $group = null)
     {
         if ($owner) {
-            $name .= '_'.$owner;
+            $name .= '_' . $owner;
         }
 
         $property = $this->getOneByOwner($name, $owner, $group);
@@ -160,14 +161,14 @@ class SettingsManager implements SettingsManagerInterface
                 return $this->settings[$group . '.' . $name];
             }
 
-            $message = 'Property \''.$name.'\' doesn\'t exists. ';
+            $message = 'Property \'' . $name . '\' doesn\'t exists. ';
 
             if ($owner) {
-                $message .= 'Owner ID is: \'' . $owner . '\'. ' ;
+                $message .= 'Owner ID is: \'' . $owner . '\'. ';
             }
 
             if ($group) {
-                $message .= 'Group name is: \'' . $group . '\'. ' ;
+                $message .= 'Group name is: \'' . $group . '\'. ';
             }
 
             $hint = implode(', ', $this->getSuggestion($name));
@@ -219,10 +220,17 @@ class SettingsManager implements SettingsManagerInterface
 
         $this->em->flush();
 
+        $this->clearCacheProvider();
+    }
+
+
+    public function clearCacheProvider()
+    {
         if ($this->cacheProvider) {
             $this->cacheProvider->deleteAll();
         }
     }
+
 
 
     /**
