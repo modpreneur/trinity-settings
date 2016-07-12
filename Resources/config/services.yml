@@ -5,6 +5,7 @@ services:
 
     trinity.settings:
       class: Trinity\Bundle\SettingsBundle\Manager\SettingsManager
+      lazy: true
       arguments:
         - "@doctrine.orm.default_entity_manager"
         - "%settings_manager.settings%"
@@ -12,6 +13,7 @@ services:
 
     trinity.settings.twig:
       class: Trinity\Bundle\SettingsBundle\Twig\SettingsExtension
+      lazy: true
       arguments:
         - "@trinity.settings"
       public: false
