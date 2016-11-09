@@ -7,7 +7,7 @@ services:
       class: Trinity\Bundle\SettingsBundle\Manager\SettingsManager
       lazy: true
       arguments:
-        - "@doctrine.orm.default_entity_manager"
+        - "@doctrine"
         - "%settings_manager.settings%"
         - "@trinity.cache"
 
