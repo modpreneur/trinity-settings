@@ -31,7 +31,6 @@ class SettingsManager implements SettingsManagerInterface
     /** @var array */
     protected $defaults = [];
 
-
     /** @var  [] */
     protected $settings;
 
