@@ -86,7 +86,7 @@ class SettingsManager implements SettingsManagerInterface
         $nname = (null !== $owner) ? $name . '_' . $owner : $name;
 
         if (null !== $item || !(array_key_exists($name, $this->defaults) && $this->defaults[$name] === $item)) {
-            $setting = $this-$this->getEntityManager()->getRepository('SettingsBundle:Setting')->findOneBy(
+            $setting = $this->getEntityManager()->getRepository('SettingsBundle:Setting')->findOneBy(
                 ['name' => $nname, 'ownerId' => $owner, 'group' => $group]
             );
             if (null === $setting) {
