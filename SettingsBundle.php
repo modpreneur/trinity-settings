@@ -5,11 +5,9 @@
 
 namespace Trinity\Bundle\SettingsBundle;
 
-
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Trinity\Bundle\SettingsBundle\DependencyInjection\TrinitySettingsExtension;
-
 
 /**
  * Class SettingsBundle
@@ -17,9 +15,12 @@ use Trinity\Bundle\SettingsBundle\DependencyInjection\TrinitySettingsExtension;
  */
 class SettingsBundle extends Bundle
 {
-
-    public function build(ContainerBuilder $container){
+    /**
+     * {@inheritDoc}
+     */
+    public function build(ContainerBuilder $container)
+    {
         parent::build($container);
-        $container->registerExtension(new TrinitySettingsExtension() );
+        $container->registerExtension(new TrinitySettingsExtension());
     }
 }

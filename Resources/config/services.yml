@@ -13,7 +13,7 @@ services:
 
     trinity.settings.twig:
       class: Trinity\Bundle\SettingsBundle\Twig\SettingsExtension
-      lazy: true
+      lazy: false
       arguments:
         - "@trinity.settings"
       public: false
