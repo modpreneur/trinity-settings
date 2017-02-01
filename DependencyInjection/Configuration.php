@@ -29,6 +29,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('settings')
+                    ->useAttributeAsKey('') //the string value is not important
                     ->prototype('scalar')
                     ->isRequired()
                     ->end()
