@@ -102,7 +102,7 @@ class SettingsManager implements SettingsManagerInterface
         $setting->setGroup($group);
 
         $this->getEntityManager()->persist($setting);
-        $this->getEntityManager()->flush($setting);
+        $this->getEntityManager()->flush();
 
         if ($this->cacheProvider) {
             $this->cacheProvider->save($nname, serialize($setting));
@@ -140,26 +140,29 @@ class SettingsManager implements SettingsManagerInterface
      */
     public function get($name, $owner = null, $group = null)
     {
+        $nName = $name;
+        dump($nName);
+
         if ($owner) {
             $name .= '_' . $owner;
         }
 
         $property = $this->getOneByOwner($name, $owner, $group);
 
-        if (null === $property && array_key_exists($name, $this->defaults)) {
+        if (null === $property && array_key_exists($nName, $this->defaults)) {
             $property = unserialize($this->defaults[$name]);
         } elseif ($property instanceof Setting) {
             $property = $property->getValue();
         } else {
-            if (array_key_exists($name, $this->settings)) {
-                return $this->settings[$name];
+            if (array_key_exists($nName, $this->settings)) {
+                return $this->settings[$nName];
             }
 
-            if (array_key_exists($group . '.' . $name, $this->settings)) {
-                return $this->settings[$group . '.' . $name];
+            if (array_key_exists($group . '.' . $nName, $this->settings)) {
+                return $this->settings[$group . '.' . $nName];
             }
 
-            $message = 'Property \'' . $name . '\' doesn\'t exists. ';
+            $message = 'Property \'' . $nName . '\' doesn\'t exists. ';
 
             if ($owner) {
                 $message .= 'Owner ID is: \'' . $owner . '\'. ';
@@ -169,11 +172,10 @@ class SettingsManager implements SettingsManagerInterface
                 $message .= 'Group name is: \'' . $group . '\'. ';
             }
 
-            $hint = implode(', ', $this->getSuggestion($name));
+            $hint = implode(', ', $this->getSuggestion($nName));
             $defaults = array_keys($this->settings);
             $set = array_keys($this->all());
             $items = implode(', ', array_merge($defaults, $set));
-
 
             throw new PropertyNotExistsException(
                 $message . 'Did you mean ' . $hint . '. Available properties are ' . $items . '.'
@@ -266,15 +268,15 @@ class SettingsManager implements SettingsManagerInterface
 
         if (null === $property || false === $property) {
             try {
-                if ($owner) {
+                if ($group && $owner) {
+                    $property = $this->getEntityManager()->getRepository('SettingsBundle:Setting')
+                        ->findOneBy(['name' => $name, 'group' => $group, 'ownerId' => $owner]);
+                } elseif ($owner) {
                     $property = $this->getEntityManager()->getRepository('SettingsBundle:Setting')
                         ->findOneBy(['name' => $name, 'ownerId' => $owner]);
                 } elseif ($group) {
                     $property = $this->getEntityManager()->getRepository('SettingsBundle:Setting')
                         ->findOneBy(['name' => $name, 'group' => $group]);
-                } elseif ($group && $owner) {
-                    $property = $this->getEntityManager()->getRepository('SettingsBundle:Setting')
-                        ->findOneBy(['name' => $name, 'group' => $group, 'ownerId' => $owner]);
                 } else {
                     $property = $this->getEntityManager()->getRepository('SettingsBundle:Setting')
                         ->findOneBy(['name' => $name]);
