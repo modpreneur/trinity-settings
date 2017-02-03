@@ -141,7 +141,6 @@ class SettingsManager implements SettingsManagerInterface
     public function get($name, $owner = null, $group = null)
     {
         $nName = $name;
-        dump($nName);
 
         if ($owner) {
             $name .= '_' . $owner;
