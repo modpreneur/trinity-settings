@@ -8,20 +8,19 @@ namespace Trinity\Bundle\SettingsBundle\Twig;
 use Trinity\Bundle\SettingsBundle\Exception\PropertyNotExistsException;
 use Trinity\Bundle\SettingsBundle\Manager\SettingsManager;
 
-
 /**
  * Class TrinitySettingsExtension
  * @package Trinity\Bundle\SettingsBundle\Twig
  */
 class SettingsExtension extends \Twig_Extension
 {
-
     /** @var  SettingsManager */
     protected $settings;
 
 
     /**
      * TrinitySettingsExtension constructor.
+     *
      * @param SettingsManager $settings
      */
     public function __construct(SettingsManager $settings)
@@ -38,6 +37,7 @@ class SettingsExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFunction('get_setting', [$this, 'getSetting']),
             new \Twig_SimpleFunction('has_setting', [$this, 'hasSetting']),
+            new \Twig_SimpleFunction('has_setting_value', [$this, 'hasSettingValue']),
         ];
     }
 
@@ -46,16 +46,18 @@ class SettingsExtension extends \Twig_Extension
      * @param string $name
      * @param int|null $owner
      * @param null|string $group
+     *
      * @return mixed|null
      */
-    public function getSetting($name, $owner = null, $group = null){
-
+    public function getSetting($name, $owner = null, $group = null)
+    {
+        $owner = $this->getOwner($owner);
         $value = null;
 
-        try{
-            $value =  $this->settings->get($name, $owner, $group);
-        }catch( PropertyNotExistsException $ex ){
-            $value =  null;
+        try {
+            $value = $this->settings->get($name, $owner, $group);
+        } catch (PropertyNotExistsException $ex) {
+            $value = null;
         }
 
         return $value;
@@ -66,10 +68,45 @@ class SettingsExtension extends \Twig_Extension
      * @param string $name
      * @param int|null $owner
      * @param null|string $group
+     *
      * @return mixed|null
      */
-    public function hasSetting($name, $owner = null, $group = null){
-        return $this->settings->has($name, $owner, $group);;
+    public function hasSetting($name, $owner = null, $group = null)
+    {
+        $owner = $this->getOwner($owner);
+
+        return $this->settings->has($name, $owner, $group);
+    }
+
+
+    /**
+     * @param $name
+     * @param $value
+     * @param null $owner
+     * @param null $group
+     *
+     * @return bool
+     */
+    public function hasSettingValue($name, $value, $owner = null, $group = null)
+    {
+        $owner = $this->getOwner($owner);
+
+        return $this->getSetting($name, $owner, $group) === $value;
+    }
+
+
+    /**
+     * @param object|int $owner
+     *
+     * @return int
+     */
+    private function getOwner($owner) // @todo -> move to manager
+    {
+        if (is_object($owner)) { // check gedId() ?? 
+            return $owner->getId();
+        }
+
+        return $owner;
     }
 
 
