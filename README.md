@@ -63,6 +63,7 @@ Note: The dot is defined for group.
     $this->get('trinity.settings')->set('parameter', $parameter, $owner);
     $this->get('trinity.settings')->get('parameter', $owner);
     $this->get('trinity.settings')->has('parameter', $owner);
+    $this->get('trinity.settings')->has('parameter', $user->getId());
 
     //Setting for some setting group ($owner can be null)
     $this->get('trinity.settings')->set('parameter', $parameter, $owner, $group);
