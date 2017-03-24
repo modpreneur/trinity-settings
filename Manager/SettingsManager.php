@@ -68,7 +68,7 @@ class SettingsManager implements SettingsManagerInterface
     /**
      * @param string $name
      * @param mixed $value string, int, boolean, object, ...
-     * @param int $owner
+     * @param int $owner ($user->getId())
      * @param null|string $group
      * @return $this
      *
@@ -113,7 +113,7 @@ class SettingsManager implements SettingsManagerInterface
 
 
     /**
-     * @param int|null $owner
+     * @param int|null $owner $owner ($user->getId())
      * @param null $group
      * @return array
      * @throws PropertyNotExistsException
@@ -133,7 +133,7 @@ class SettingsManager implements SettingsManagerInterface
 
     /**
      * @param string $name
-     * @param int|null $owner
+     * @param int|null $owner $owner ($user->getId())
      * @param null|string $group
      * @return mixed
      * @throws PropertyNotExistsException
@@ -187,7 +187,7 @@ class SettingsManager implements SettingsManagerInterface
 
     /**
      * @param array $settings
-     * @param int|null $owner
+     * @param int|null $owner $owner ($user->getId())
      * @param null|string $group
      * @return $this
      * @throws \Doctrine\ORM\OptimisticLockException
