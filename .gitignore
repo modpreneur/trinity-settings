@@ -1,8 +1,6 @@
-/vendor/*
 # Build data
 /build/
-#idea
 .idea
-Tests/Functional/app/cache
-Tests/Functional/app/logs
 .gitignore
+Tests/Functional/var/
+vendor/
