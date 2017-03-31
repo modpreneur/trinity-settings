@@ -1,11 +1,11 @@
-FROM modpreneur/trinity-test:alpine
+FROM modpreneur/trinity-test:0.2.1
 
-MAINTAINER Barbora Čápová <capova@modpreneur.com>
+MAINTAINER Martin Kolek <kole@modpreneur.com>
 
-ADD . /var/app
-#
+#ADD . /var/app
+
 WORKDIR /var/app
-#
-RUN chmod +x entrypoint.sh
-#
-ENTRYPOINT ["sh", "entrypoint.sh"]
+
+#RUN chmod +x entrypoint.sh
+
+ENTRYPOINT ["fish", "entrypoint.sh"]

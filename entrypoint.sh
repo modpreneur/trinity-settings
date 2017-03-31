@@ -4,4 +4,6 @@ composer update
 
 phpunit
 
-#while true; do sleep 1000; done
+echo "Tests are done"
+
+#tail -f /dev/null
