@@ -57,6 +57,10 @@ class Setting
      */
     private $group;
 
+    /** @var  bool */
+    private $isPrivate;
+
+
     /**
      * Get id
      *
@@ -67,10 +71,12 @@ class Setting
         return $this->id;
     }
 
+
     /**
      * Set name
      *
      * @param string $name
+     *
      * @return Setting
      */
     public function setName($name)
@@ -79,6 +85,7 @@ class Setting
 
         return $this;
     }
+
 
     /**
      * Get name
@@ -90,10 +97,12 @@ class Setting
         return $this->name;
     }
 
+
     /**
      * Set value
      *
      * @param string $value
+     *
      * @return Setting
      */
     public function setValue($value)
@@ -102,6 +111,7 @@ class Setting
 
         return $this;
     }
+
 
     /**
      * Get value
@@ -113,6 +123,7 @@ class Setting
         return unserialize($this->value);
     }
 
+
     /**
      * @return string
      */
@@ -121,15 +132,32 @@ class Setting
         return $this->ownerId;
     }
 
+
     /**
+     * @deprecated
+     *
      * @param string $ownerId
      *
      * @return Setting
      */
     public function setOwnerId($ownerId)
     {
-        $this->ownerId = $ownerId;
+        return $this->setOwner($ownerId);
+    }
 
+
+    /**
+     * @param int|object $owner
+     *
+     * @return $this
+     */
+    public function setOwner($owner)
+    {
+        if (is_object($owner) && method_exists($owner, 'getId')) {
+            $owner = $owner->getId();
+        }
+
+        $this->ownerId = $owner;
         return $this;
     }
 
@@ -149,5 +177,23 @@ class Setting
     public function setGroup($group)
     {
         $this->group = $group;
+    }
+
+
+    /**
+     * @return boolean
+     */
+    public function isIsPrivate()
+    {
+        return $this->isPrivate;
+    }
+
+
+    /**
+     * @param boolean $isPrivate
+     */
+    public function setIsPrivate($isPrivate)
+    {
+        $this->isPrivate = $isPrivate;
     }
 }

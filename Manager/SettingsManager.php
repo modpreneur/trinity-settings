@@ -24,7 +24,7 @@ class SettingsManager implements SettingsManagerInterface
     /** @var  ObjectManager */
     protected $entityManager;
 
-    /** @var CacheProvider*/
+    /** @var CacheProvider */
     protected $cacheProvider;
 
     /** @var array */
@@ -33,8 +33,10 @@ class SettingsManager implements SettingsManagerInterface
     /** @var  [] */
     protected $settings;
 
+
     /**
      * SettingsManager constructor.
+     *
      * @param RegistryInterface $registry
      * @param array $settings
      * @param CacheProvider $cacheProvider
@@ -70,6 +72,7 @@ class SettingsManager implements SettingsManagerInterface
      * @param mixed $value string, int, boolean, object, ...
      * @param int $owner ($user->getId())
      * @param null|string $group
+     *
      * @return $this
      *
      * @throws \Doctrine\ORM\OptimisticLockException
@@ -86,9 +89,8 @@ class SettingsManager implements SettingsManagerInterface
         $nname = (null !== $owner) ? $name . '_' . $owner : $name;
 
         if (null !== $item || !(array_key_exists($name, $this->defaults) && $this->defaults[$name] === $item)) {
-            $setting = $this->getEntityManager()->getRepository('SettingsBundle:Setting')->findOneBy(
-                ['name' => $nname, 'ownerId' => $owner, 'group' => $group]
-            );
+            $setting = $this->getOneByOwner($name, $owner, $group);
+
             if (null === $setting) {
                 $setting = new Setting();
             }
@@ -105,7 +107,11 @@ class SettingsManager implements SettingsManagerInterface
         $this->getEntityManager()->flush();
 
         if ($this->cacheProvider) {
-            $this->cacheProvider->save($nname, serialize($setting));
+            dump('_');
+            dump($nname);
+            dump('_');
+            $this->cacheProvider->save($nname, serialize($setting), 10000);
+            dump(serialize($setting));
         }
 
         return $this;
@@ -115,6 +121,7 @@ class SettingsManager implements SettingsManagerInterface
     /**
      * @param int|null $owner $owner ($user->getId())
      * @param null $group
+     *
      * @return array
      * @throws PropertyNotExistsException
      */
@@ -135,6 +142,7 @@ class SettingsManager implements SettingsManagerInterface
      * @param string $name
      * @param int|null $owner $owner ($user->getId())
      * @param null|string $group
+     *
      * @return mixed
      * @throws PropertyNotExistsException
      */
@@ -176,8 +184,12 @@ class SettingsManager implements SettingsManagerInterface
             $set = array_keys($this->all());
             $items = implode(', ', array_merge($defaults, $set));
 
+            if ($hint) {
+                $message = $message . 'Did you mean ' . $hint . '. ';
+            }
+
             throw new PropertyNotExistsException(
-                $message . 'Did you mean ' . $hint . '. Available properties are ' . $items . '.'
+                $message . 'Available properties are ' . $items . '.'
             );
         }
 
@@ -189,6 +201,7 @@ class SettingsManager implements SettingsManagerInterface
      * @param array $settings
      * @param int|null $owner $owner ($user->getId())
      * @param null|string $group
+     *
      * @return $this
      * @throws \Doctrine\ORM\OptimisticLockException
      * @throws \Doctrine\ORM\ORMInvalidArgumentException
@@ -206,6 +219,7 @@ class SettingsManager implements SettingsManagerInterface
     /**
      * @param int|null $owner
      * @param null $group
+     *
      * @throws \Doctrine\ORM\ORMInvalidArgumentException
      * @throws \Doctrine\ORM\OptimisticLockException
      */
@@ -234,10 +248,10 @@ class SettingsManager implements SettingsManagerInterface
     }
 
 
-
     /**
      * @param string $name
      * @param string $value
+     *
      * @return $this
      * @throws \Doctrine\ORM\OptimisticLockException
      * @throws \Doctrine\ORM\ORMInvalidArgumentException
@@ -255,6 +269,7 @@ class SettingsManager implements SettingsManagerInterface
      * @param string $name
      * @param int $owner
      * @param null|string $group
+     *
      * @return null|object|Setting
      */
     protected function getOneByOwner($name, $owner, $group = null)
@@ -262,22 +277,25 @@ class SettingsManager implements SettingsManagerInterface
         $property = null;
 
         if ($this->cacheProvider) {
+            dump($name);
             $property = unserialize($this->cacheProvider->fetch($name));
+            dump('xxx');
+            dump($this->cacheProvider->fetch($name));
         }
 
         if (null === $property || false === $property) {
             try {
                 if ($group && $owner) {
-                    $property = $this->getEntityManager()->getRepository('SettingsBundle:Setting')
+                    $property = $this->getEntityManager()->getRepository(Setting::class)
                         ->findOneBy(['name' => $name, 'group' => $group, 'ownerId' => $owner]);
                 } elseif ($owner) {
-                    $property = $this->getEntityManager()->getRepository('SettingsBundle:Setting')
+                    $property = $this->getEntityManager()->getRepository(Setting::class)
                         ->findOneBy(['name' => $name, 'ownerId' => $owner]);
                 } elseif ($group) {
-                    $property = $this->getEntityManager()->getRepository('SettingsBundle:Setting')
+                    $property = $this->getEntityManager()->getRepository(Setting::class)
                         ->findOneBy(['name' => $name, 'group' => $group]);
                 } else {
-                    $property = $this->getEntityManager()->getRepository('SettingsBundle:Setting')
+                    $property = $this->getEntityManager()->getRepository(Setting::class)
                         ->findOneBy(['name' => $name]);
                 }
             } catch (\Exception $ex) {
@@ -293,6 +311,7 @@ class SettingsManager implements SettingsManagerInterface
     /**
      * @param int|null $owner
      * @param null|string $group
+     *
      * @return array|\Trinity\Bundle\SettingsBundle\Entity\Setting[]
      * @throws \UnexpectedValueException
      */
@@ -318,6 +337,7 @@ class SettingsManager implements SettingsManagerInterface
      * @param string $name
      * @param int|null $owner
      * @param null|string $group
+     *
      * @return bool
      */
     public function has($name, $owner = null, $group = null): bool
@@ -334,6 +354,7 @@ class SettingsManager implements SettingsManagerInterface
 
     /**
      * @param string $value
+     *
      * @return array
      * @throws \Trinity\Bundle\SettingsBundle\Exception\PropertyNotExistsException
      */
@@ -361,6 +382,7 @@ class SettingsManager implements SettingsManagerInterface
         return $best;
     }
 
+
     /**
      * @return ObjectManager
      */
@@ -372,5 +394,4 @@ class SettingsManager implements SettingsManagerInterface
 
         return $this->doctrineRegistry->getManager();
     }
-
 }

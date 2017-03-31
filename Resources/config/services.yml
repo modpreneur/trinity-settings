@@ -3,6 +3,7 @@ services:
     trinity.cache:
       class: Doctrine\Common\Cache\ApcuCache
 
+
     trinity.settings:
       class: Trinity\Bundle\SettingsBundle\Manager\SettingsManager
       lazy: true
@@ -10,6 +11,7 @@ services:
         - "@doctrine"
         - "%settings_manager.settings%"
         - "@trinity.cache"
+
 
     trinity.settings.twig:
       class: Trinity\Bundle\SettingsBundle\Twig\SettingsExtension

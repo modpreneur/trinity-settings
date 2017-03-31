@@ -6,3 +6,7 @@
 Tests/Functional/app/cache
 Tests/Functional/app/logs
 .gitignore
+tests/_output/
+
+Tests/_output
+Tests/Functional/var/*
