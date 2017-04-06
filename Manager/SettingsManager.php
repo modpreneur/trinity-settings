@@ -107,11 +107,7 @@ class SettingsManager implements SettingsManagerInterface
         $this->getEntityManager()->flush();
 
         if ($this->cacheProvider) {
-            dump('_');
-            dump($nname);
-            dump('_');
             $this->cacheProvider->save($nname, serialize($setting), 10000);
-            dump(serialize($setting));
         }
 
         return $this;
@@ -272,15 +268,15 @@ class SettingsManager implements SettingsManagerInterface
      *
      * @return null|object|Setting
      */
-    protected function getOneByOwner($name, $owner, $group = null)
+    protected function getOneByOwner($name, $owner = null, $group = null)
     {
         $property = null;
 
         if ($this->cacheProvider) {
-            dump($name);
+            ////dump($name);
             $property = unserialize($this->cacheProvider->fetch($name));
-            dump('xxx');
-            dump($this->cacheProvider->fetch($name));
+            //dump('xxx');
+            //dump($this->cacheProvider->fetch($name));
         }
 
         if (null === $property || false === $property) {

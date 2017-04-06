@@ -10,3 +10,4 @@ tests/_output/
 
 Tests/_output
 Tests/Functional/var/*
+bin/*

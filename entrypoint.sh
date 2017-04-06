@@ -6,4 +6,4 @@ phpunit
 
 echo "Tests are done"
 
-#tail -f /dev/null
+tail -f /dev/null
