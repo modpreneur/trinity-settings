@@ -88,7 +88,7 @@ class SettingsManager implements SettingsManagerInterface
 
         $nname = (null !== $owner) ? $name . '_' . $owner : $name;
 
-        if (null !== $item || !(array_key_exists($name, $this->defaults) && $this->defaults[$name] === $item)) {
+        if (null !== $item || !(array_key_exists($name, $this->defaults) && unserialize($this->defaults[$name]) === $item)) {
             $setting = $this->getOneByOwner($name, $owner, $group);
 
             if (null === $setting) {
@@ -222,7 +222,6 @@ class SettingsManager implements SettingsManagerInterface
     public function clear($owner = null, $group = null)
     {
         $rows = $this->findAllByOwner($owner, $group);
-
         foreach ($rows as $row) {
             $this->getEntityManager()->remove($row);
         }
@@ -273,13 +272,13 @@ class SettingsManager implements SettingsManagerInterface
         $property = null;
 
         if ($this->cacheProvider) {
-            ////dump($name);
             $property = unserialize($this->cacheProvider->fetch($name));
             //dump('xxx');
             //dump($this->cacheProvider->fetch($name));
         }
 
         if (null === $property || false === $property) {
+
             try {
                 if ($group && $owner) {
                     $property = $this->getEntityManager()->getRepository(Setting::class)
@@ -314,17 +313,16 @@ class SettingsManager implements SettingsManagerInterface
     protected function findAllByOwner($owner = null, $group = null)
     {
         $entityManager = $this->getEntityManager();
-        if ($owner) {
+        if ($owner && $group) {
+            $properties = $entityManager->getRepository('SettingsBundle:Setting')
+                ->findBy(['group' => $group, 'ownerId' => $owner]);
+        } elseif ($owner) {
             $properties = $entityManager->getRepository('SettingsBundle:Setting')->findBy(['ownerId' => $owner]);
         } elseif ($group) {
             $properties = $entityManager->getRepository('SettingsBundle:Setting')->findBy(['group' => $group]);
-        } elseif ($owner && $group) {
-            $properties = $entityManager->getRepository('SettingsBundle:Setting')
-                ->findBy(['group' => $group, 'ownerId' => $owner]);
         } else {
             $properties = $entityManager->getRepository('SettingsBundle:Setting')->findAll();
         }
-
         return $properties;
     }
 

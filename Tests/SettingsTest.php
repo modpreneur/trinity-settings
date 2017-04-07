@@ -685,4 +685,141 @@ class SettingsTest extends TestCase
         $this->assertNull($settings->get('parameter1'));
 
     }
+
+    /**
+     * @dataProvider setDataWithNullDefaultValueProvider
+     */
+    public function testSetDataWithNullDefaultValue($name, $value, $owner = null, $group = null)
+    {
+        // Mocking
+        $settingsEntity = new Setting();
+        $settingsEntity->setName($name);
+        $settingsEntity->setValue(null);
+        !$owner ?: $settingsEntity->setOwner($owner);
+        !$group ?: $settingsEntity->setGroup($group);
+
+        $settingsRepository = $this
+            ->getMockBuilder(EntityRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $settingsRepository
+            ->method('findOneBy')
+            ->will($this->returnValue($settingsEntity));
+
+        $settings = new SettingsManager(
+            $this->getRegistry($settingsRepository),
+            [$name => null]
+        );
+
+       $settings->setDefault($name, null);
+
+        $settings->set($name, $value, $owner, $group);
+
+        //tests
+
+        /* conditions for settingProvider count of arguments */
+        if(isset($group)){
+            $this->assertEquals(null, $settings->get($name, $owner, $group));
+
+        } elseif (isset($owner)) {
+            $this->assertEquals(null, $settings->get($name, $owner));
+        } else {
+            $this->assertEquals(null, $settings->get($name));
+        }
+    }
+
+    public function setDataWithNullDefaultValueProvider()
+    {
+        return [
+            ['parameter1', '1 + 2', 1, 'testingGroup'],
+            ['parameter2', 'foo', 1, 'testingGroup'],
+            ['parameter3', '43cm', 1, 'foo']
+        ];
+    }
+
+    public function testGetValueFailDoctrine()
+    {
+        // Mocking
+        $settingsEntity = new Setting();
+        $settingsEntity->setName('parameter');
+        $settingsEntity->setValue('value');
+        $settingsEntity->setOwner($this->getUserId());
+        $settingsEntity->setGroup('testingGroup');
+
+        $ex = new \Exception();
+        $settingsRepository = $this
+            ->getMockBuilder(EntityRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $settingsRepository
+            ->method('findOneBy')
+            ->will($this->throwException(new \Exception));
+
+        $settingsRepository
+            ->method('findAll')
+            ->will($this->throwException(new \Exception));
+
+        $settings = new SettingsManager(
+            $this->getRegistry($settingsRepository),
+            ['parameter' => 'default']
+        );
+
+        $settings->setDefault('parameter_1', 'default');
+        $settings->set('parameter', 'foo', $this->getUserId(), 'testingGroup'); // apcu
+
+        $this->assertEquals('default', $settings->get('parameter', 1, 'testingGroup'));
+    }
+
+    public function testClear()
+    {
+        // Mocking
+        $settingsEntity = new Setting();
+        $settingsEntity->setName('parameter');
+        $settingsEntity->setValue('value');
+        $settingsEntity->setOwner($this->getUserId());
+        $settingsEntity->setGroup('testingGroup');
+
+        $settingsEntity2 = new Setting();
+        $settingsEntity2->setName('parameter');
+        $settingsEntity2->setValue('value');
+        $settingsEntity2->setOwner($this->getUserId());
+        $settingsEntity2->setGroup('testingGroup');
+
+        $row = [$settingsEntity, $settingsEntity2];
+
+        $settingsRepository = $this
+            ->getMockBuilder(EntityRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $settingsRepository
+            ->method('findOneBy')
+            ->will($this->returnValue($settingsEntity));
+
+        $settingsRepository
+            ->method('findAll')
+            ->willReturn($row);
+
+        $settingsRepository
+            ->method('findBy')
+            ->willReturn($row);
+
+        $settings = new SettingsManager(
+            $this->getRegistry($settingsRepository),
+            ['parameter' => 'default']
+        );
+
+        $settings->setDefault('height', 'default');
+
+        $this->assertEquals('default', $settings->get('height', $this->getUserId()));
+
+        $settings->set('height', '67cm', $this->getUserId(), 'testingGroup'); // apcu
+
+        $this->assertEquals('67cm', $settings->get('height', null, 'testingGroup'));
+
+        $settings->clear($this->getUserId(), 'testingGroup');
+
+        $this->assertEquals('67cm', $settings->get('height'));
+    }
 }
