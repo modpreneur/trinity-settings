@@ -8,9 +8,12 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
 use Mockery\Mock;
 use PHPUnit\Framework\TestCase;
+use Trinity\Bundle\SettingsBundle\DependencyInjection\TrinitySettingsExtension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Trinity\Bundle\SettingsBundle\Entity\Setting;
 use Trinity\Bundle\SettingsBundle\Manager\SettingsManager;
 use Trinity\Bundle\SettingsBundle\Twig\SettingsExtension;
+use Trinity\Bundle\SettingsBundle\SettingsBundle;
 
 /**
  * Class SettingsTest
@@ -911,5 +914,80 @@ class SettingsTest extends TestCase
         $extension = new SettingsExtension($settings);
 
         $this->assertNull($extension->getSetting('foo'));
+    }
+
+
+    /**
+     * @dataProvider configurationDataProvider
+     */
+    public function testConfiguration($configs)
+    {
+        $loader = new TrinitySettingsExtension();
+
+        $container = new ContainerBuilder();
+        $loader->load($configs, $container);
+
+        $parameterBag = $container->getParameter('settings_manager.settings');
+
+        $this->assertEquals($configs[0]['settings']['null_value'], $parameterBag['null_value']);
+        $this->assertEquals($configs[0]['settings']['key'], $parameterBag['key']);
+        $this->assertEquals($configs[0]['settings']['group.key'], $parameterBag['group.key']);
+    }
+
+    public function configurationDataProvider()
+    {
+        return [
+            [
+                [
+                    [
+                        'settings' => [
+                            'null_value' => '~',
+                            'key' => 'testKey',
+                            'group.key' => 'testGroupKey'
+                        ]
+                    ]
+                ]
+            ]
+            ,
+            [
+                [
+                    [
+                        'settings' => [
+                            'null_value' => '~',
+                            'key' => 'default',
+                            'group.key' => 'default'
+                        ]
+                    ]
+                ]
+
+            ],
+            [
+                [
+                    [
+                        'settings' => [
+                            'null_value' => 'null',
+                            'key' => 'null',
+                            'group.key' => 'null'
+                        ]
+                    ]
+                ]
+
+            ]
+        ];
+    }
+
+    public function testSettingBundle()
+    {
+        $container = new ContainerBuilder();
+        $settingBundle = new SettingsBundle();
+
+        $settingBundle->build($container);
+
+        $extensions = $container->getExtensions();
+
+        $this->assertInstanceOf(TrinitySettingsExtension::class , $extensions['trinity_settings']);
+        $this->assertInstanceOf(TrinitySettingsExtension::class , $container->getExtension('trinity_settings'));
+        $this->assertTrue($container->hasExtension('trinity_settings'));
+
     }
 }
