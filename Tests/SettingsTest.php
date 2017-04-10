@@ -945,16 +945,10 @@ class SettingsTest extends TestCase
 
         $parameterBag = $container->getParameter('settings_manager.settings');
 
-        $first = array_key_exists('null_value', $configs[0]['settings']) ? $configs[0]['settings']['null_value'] : null;
-
-        $second = array_key_exists('null_value', $configs[0]['settings']) ? $configs[0]['settings']['key'] : null;
-
-        $third = array_key_exists('null_value', $configs[0]['settings']) ? $configs[0]['settings']['group.key'] : null;
-
         if(array_key_exists('null_value', $configs[0]['settings'])){
-            $this->assertEquals($first, $parameterBag['null_value']);
-            $this->assertEquals($second, $parameterBag['key']);
-            $this->assertEquals($third, $parameterBag['group.key']);
+            $this->assertEquals($configs[0]['settings']['null_value'], $parameterBag['null_value']);
+            $this->assertEquals($configs[0]['settings']['key'], $parameterBag['key']);
+            $this->assertEquals($configs[0]['settings']['group.key'], $parameterBag['group.key']);
         } else {
             $this->assertEmpty($parameterBag);
         }
