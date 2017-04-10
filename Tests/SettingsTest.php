@@ -6,7 +6,6 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
-use Mockery\Mock;
 use PHPUnit\Framework\TestCase;
 use Trinity\Bundle\SettingsBundle\DependencyInjection\TrinitySettingsExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -21,6 +20,7 @@ use Trinity\Bundle\SettingsBundle\SettingsBundle;
  */
 class SettingsTest extends TestCase
 {
+
     /**
      * @return Registry
      */
@@ -240,6 +240,7 @@ class SettingsTest extends TestCase
         $this->assertEquals('tom', $settings->get('parameter'));
     }
 
+
     public function testSetValueAndGet()
     {
         // Mocking
@@ -273,6 +274,7 @@ class SettingsTest extends TestCase
         $this->assertEquals('67cm', $settings->get('height'));
     }
 
+
     public function testGetDefaultValue()
     {
         // Mocking
@@ -302,6 +304,7 @@ class SettingsTest extends TestCase
 
         $this->assertEquals('default', $settings->get('height'));
     }
+
 
     public function testSetDefaultValueSetValueAndClear()
     {
@@ -349,6 +352,7 @@ class SettingsTest extends TestCase
 
         $this->assertEquals('default', $settings->get('height'));
     }
+
 
     public function testHasWithOutGroup()
     {
@@ -427,6 +431,7 @@ class SettingsTest extends TestCase
 
     }
 
+
     /**
      * @dataProvider settingProvider
      */
@@ -467,6 +472,7 @@ class SettingsTest extends TestCase
             $this->assertEquals($value, $settings->get($name));
         }
     }
+
 
     public function settingProvider()
     {
@@ -510,6 +516,7 @@ class SettingsTest extends TestCase
         $this->assertEmpty($settings->all( null, 'yyy'));
         $this->assertEmpty($settings->all('xxx', 'yyy'));
     }
+
 
     /**
      * @dataProvider settingManyProvider
@@ -567,6 +574,7 @@ class SettingsTest extends TestCase
         }
     }
 
+
     public function settingManyProvider()
     {
         return [
@@ -605,6 +613,7 @@ class SettingsTest extends TestCase
             ],
         ];
     }
+
 
     /**
      * @dataProvider getSuggestionProvider
@@ -648,6 +657,7 @@ class SettingsTest extends TestCase
         $this->assertInternalType('string',$settings->get($neco[0], $this->getUserId(), 'testingGroup'));
     }
 
+
     public function getSuggestionProvider()
     {
         return [
@@ -658,6 +668,7 @@ class SettingsTest extends TestCase
             ['parakoter']
         ];
     }
+
 
     /**
      * @expectedException \Trinity\Bundle\SettingsBundle\Exception\PropertyNotExistsException
@@ -708,6 +719,7 @@ class SettingsTest extends TestCase
 
     }
 
+
     /**
      * @dataProvider setDataWithNullDefaultValueProvider
      */
@@ -751,6 +763,7 @@ class SettingsTest extends TestCase
         }
     }
 
+
     public function setDataWithNullDefaultValueProvider()
     {
         return [
@@ -759,6 +772,7 @@ class SettingsTest extends TestCase
             ['parameter3', '43cm', 1, 'foo']
         ];
     }
+
 
     public function testGetValueFailDoctrine()
     {
@@ -793,6 +807,7 @@ class SettingsTest extends TestCase
 
         $this->assertEquals('default', $settings->get('parameter', 1, 'testingGroup'));
     }
+
 
     public function testClear()
     {
@@ -844,6 +859,7 @@ class SettingsTest extends TestCase
 
         $this->assertEquals('67cm', $settings->get('height'));
     }
+
 
     public function testSettingsExtension()
     {
@@ -929,10 +945,21 @@ class SettingsTest extends TestCase
 
         $parameterBag = $container->getParameter('settings_manager.settings');
 
-        $this->assertEquals($configs[0]['settings']['null_value'], $parameterBag['null_value']);
-        $this->assertEquals($configs[0]['settings']['key'], $parameterBag['key']);
-        $this->assertEquals($configs[0]['settings']['group.key'], $parameterBag['group.key']);
+        $first = array_key_exists('null_value', $configs[0]['settings']) ? $configs[0]['settings']['null_value'] : null;
+
+        $second = array_key_exists('null_value', $configs[0]['settings']) ? $configs[0]['settings']['key'] : null;
+
+        $third = array_key_exists('null_value', $configs[0]['settings']) ? $configs[0]['settings']['group.key'] : null;
+
+        if(array_key_exists('null_value', $configs[0]['settings'])){
+            $this->assertEquals($first, $parameterBag['null_value']);
+            $this->assertEquals($second, $parameterBag['key']);
+            $this->assertEquals($third, $parameterBag['group.key']);
+        } else {
+            $this->assertEmpty($parameterBag);
+        }
     }
+
 
     public function configurationDataProvider()
     {
@@ -971,10 +998,20 @@ class SettingsTest extends TestCase
                         ]
                     ]
                 ]
+            ],
+            [
+                [
+                    [
+                        'settings' => [
 
+                        ]
+
+                    ]
+                ]
             ]
         ];
     }
+
 
     public function testSettingBundle()
     {

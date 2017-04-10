@@ -96,16 +96,12 @@ class SettingsExtension extends \Twig_Extension
 
 
     /**
-     * @param object|int $owner
+     * @param int $owner
      *
      * @return int
      */
-    private function getOwner($owner) // @todo -> move to manager
+    private function getOwner($owner)
     {
-        if (is_object($owner)) { // check gedId() ?? 
-            return $owner->getId();
-        }
-
         return $owner;
     }
 
