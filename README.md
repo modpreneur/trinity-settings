@@ -81,3 +81,7 @@ Note: The dot is defined for group.
     {{ has_setting('some_user_setting', app.user.id) }}
     {{ has_setting('some_group_setting', null, 'MySettingGroup') }}
     {{ has_setting('some_user_group_setting', app.user.id, 'MySettingGroup') }}
+
+###Running tests:
+
+    php "bin/phpunit.phar"
