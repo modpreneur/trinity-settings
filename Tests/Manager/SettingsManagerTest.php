@@ -1,137 +1,19 @@
 <?php
 
-namespace Tests;
+namespace Tests\Manager;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Cache\ApcuCache;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
-use PHPUnit\Framework\TestCase;
-use Trinity\Bundle\SettingsBundle\DependencyInjection\TrinitySettingsExtension;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Trinity\Bundle\SettingsBundle\Entity\Setting;
 use Trinity\Bundle\SettingsBundle\Manager\SettingsManager;
-use Trinity\Bundle\SettingsBundle\Twig\SettingsExtension;
-use Trinity\Bundle\SettingsBundle\SettingsBundle;
+use Tests\BaseTest;
 
 /**
- * Class SettingsTest
+ * Class SettingsManagerTest
  * @package Tests
  */
-class SettingsTest extends TestCase
+class SettingsManagerTest extends BaseTest
 {
-
-    /**
-     * @return Registry
-     */
-    private function getRegistry($settingsRepository)
-    {
-        $registry = $this
-            ->getMockBuilder(Registry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $entityManager = $this
-            ->getMockBuilder(ObjectManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $entityManager->method('getRepository')
-            ->willReturn($settingsRepository);
-
-        $registry->method('getManager')
-            ->will($this->returnValue($entityManager));
-
-        return $registry;
-    }
-
-
-    /**
-     * Return user id. $this->getUser()->getId();
-     * @return int
-     */
-    private function getUserId(): int
-    {
-        return 1;
-    }
-
-
-    public function testEntity()
-    {
-        $owner = $this->getMockBuilder(Owner::class)
-            ->setMethods(['getId'])
-            ->getMock();
-
-        // Set up the expectation for the update() method
-        // to be called only once and with the string 'something'
-        // as its parameter.
-        $owner->expects($this->any())
-            ->method('getId')
-            ->will($this->returnValue(1));
-
-
-        $settingsEntity = new Setting();
-
-        $this->assertNull($settingsEntity->getId());
-
-        $settingsEntity->setName('name');
-        $this->assertEquals('name', $settingsEntity->getName());
-
-        $settingsEntity->setValue('value');
-        $this->assertEquals('value', $settingsEntity->getValue());
-
-        $settingsEntity->setGroup('group');
-        $this->assertEquals('group', $settingsEntity->getGroup());
-
-        $settingsEntity->setOwnerId(1);
-        $this->assertEquals(1, $settingsEntity->getOwnerId());
-
-        $settingsEntity->setOwner(2);
-        $this->assertEquals(2, $settingsEntity->getOwnerId());
-
-        $settingsEntity->setOwner($owner);
-        $this->assertEquals(1, $settingsEntity->getOwnerId());
-
-        $settingsEntity->setIsPrivate(false);
-        $this->assertFalse($settingsEntity->isIsPrivate());
-    }
-
-
-    public function testSetValueToEntity() : void
-    {
-        $settingsEntity = new Setting();
-
-        $settingsRepository = $this
-            ->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $settingsRepository
-            ->method('findOneBy')
-            ->will($this->returnValue($settingsEntity));
-
-        $settings = new SettingsManager($this->getRegistry($settingsRepository), ['user.profileUrl']);
-        $settings->set('profileUrl', 'https://example.php/image.jpg', $this->getUserId(), 'user');
-
-        // tests
-
-        $this->assertEquals('profileUrl_1', $settingsEntity->getName());
-        $this->assertEquals('https://example.php/image.jpg', $settingsEntity->getValue());
-        $this->assertEquals($this->getUserId(), $settingsEntity->getOwnerId());
-        $this->assertEquals('user', $settingsEntity->getGroup());
-
-        /* array as value */
-        $settings->set('profileUrl', ['x', 'y', 'z'], $this->getUserId(), 'user');
-        $this->assertEquals(['x', 'y', 'z'], $settingsEntity->getValue());
-
-        // without group
-        $settings->set('profileUrl', 'value', $this->getUserId());
-        $this->assertNull($settingsEntity->getGroup());
-
-        // without group and userId
-        $settings->set('profileUrl', 'value');
-        $this->assertNull($settingsEntity->getOwnerId());
-    }
-
 
     /**
      * @expectedException \Trinity\Bundle\SettingsBundle\Exception\PropertyNotExistsException
@@ -206,6 +88,40 @@ class SettingsTest extends TestCase
         // group with default value
         $settings = new SettingsManager($this->getRegistry($settingsRepository), ['user.profileUrl' => 'defaultValue']);
         $this->assertEquals('defaultValue', $settings->get('profileUrl', 1, 'user'));
+    }
+
+
+    public function testSetValueToEntity() : void
+    {
+        $settingsEntity = new Setting();
+
+        $settingsRepository = $this
+            ->getMockBuilder(EntityRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $settingsRepository
+            ->method('findOneBy')
+            ->will($this->returnValue($settingsEntity));
+
+        $settings = new SettingsManager($this->getRegistry($settingsRepository), ['user.profileUrl']);
+        $settings->set('profileUrl', 'https://example.php/image.jpg', $this->getUserId(), 'user');
+
+        $this->assertEquals('profileUrl_1', $settingsEntity->getName());
+        $this->assertEquals('https://example.php/image.jpg', $settingsEntity->getValue());
+        $this->assertEquals($this->getUserId(), $settingsEntity->getOwnerId());
+        $this->assertEquals('user', $settingsEntity->getGroup());
+
+        /* array as value */
+        $settings->set('profileUrl', ['x', 'y', 'z'], $this->getUserId(), 'user');
+        $this->assertEquals(['x', 'y', 'z'], $settingsEntity->getValue());
+
+        // without group
+        $settings->set('profileUrl', 'value', $this->getUserId());
+        $this->assertNull($settingsEntity->getGroup());
+
+        // without group and userId
+        $settings->set('profileUrl', 'value');
+        $this->assertNull($settingsEntity->getOwnerId());
     }
 
 
@@ -293,7 +209,6 @@ class SettingsTest extends TestCase
         $settingsRepository
             ->method('findAll')
             ->willReturn([]);
-
 
         $settings = new SettingsManager(
             $this->getRegistry($settingsRepository),
@@ -387,10 +302,7 @@ class SettingsTest extends TestCase
             new ApcuCache()
         );
 
-
         $settings->set('height', '67cm', $this->getUserId(), 'testingGroup'); // apcu
-
-        //tests
 
         /* has for existing setting */
         $this->assertTrue($settings->has('height', $this->getUserId()));
@@ -423,12 +335,10 @@ class SettingsTest extends TestCase
         /* getCacheProvider for SettingsManager where is not defined */
         $this->assertNull($settings->getCacheProvider());
 
-
         $settings->setCacheProvider(new ApcuCache());
 
         /* getCacheProvider for SettingsManager where is set cacheProvider */
         $this->assertInstanceOf(ApcuCache::class, $settings->getCacheProvider());
-
     }
 
 
@@ -463,7 +373,7 @@ class SettingsTest extends TestCase
         //tests
 
         /* conditions for settingProvider count of arguments */
-        if(isset($group)){
+        if (isset($group)) {
             $this->assertEquals($value, $settings->get($name, $owner, $group));
 
         } elseif (isset($owner)) {
@@ -492,9 +402,9 @@ class SettingsTest extends TestCase
     {
         // Mocking
         $settingsRepository = $this
-        ->getMockBuilder(EntityRepository::class)
-        ->disableOriginalConstructor()
-        ->getMock();
+            ->getMockBuilder(EntityRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $settingsRepository
             ->method('findBy')
@@ -513,7 +423,7 @@ class SettingsTest extends TestCase
 
         //with arguments
         $this->assertEmpty($settings->all('xxx'));
-        $this->assertEmpty($settings->all( null, 'yyy'));
+        $this->assertEmpty($settings->all(null, 'yyy'));
         $this->assertEmpty($settings->all('xxx', 'yyy'));
     }
 
@@ -521,14 +431,14 @@ class SettingsTest extends TestCase
     /**
      * @dataProvider settingManyProvider
      */
-    public function testSetMany($paramenters, $owner = null, $group = null)
+    public function testSetMany($parameters, $owner = null, $group = null)
     {
         // Mocking
         $all = [];
 
-        /* Setting up mocking Entity from array $paramenters */
+        /* Setting up mocking Entity from array $parameters */
 
-        foreach ($paramenters as $key => $value) {
+        foreach ($parameters as $key => $value) {
             $settingsEntity = new Setting();
             $settingsEntity->setName($key);
             $settingsEntity->setValue($value);
@@ -555,16 +465,15 @@ class SettingsTest extends TestCase
             new ApcuCache()
         );
 
-        $settings->setMany($paramenters, $owner, $group);
+        $settings->setMany($parameters, $owner, $group);
 
         $allGhost = $settings->all($owner, $group);
 
         $index = 0;
 
         foreach ($allGhost as $key => $value) {
+            $this->assertTrue(array_key_exists($all[$index]->getName(), $allGhost));
 
-
-            $this->assertTrue(array_key_exists ( $all[$index]->getName() , $allGhost ));
             //check if is correctly set
             $this->assertEquals($all[$index]->getValue(), $allGhost[$all[$index]->getName()]);
 
@@ -654,7 +563,7 @@ class SettingsTest extends TestCase
         $this->assertNotEmpty($settings->getSuggestion($value));
         $this->assertTrue(in_array('parameter', $settings->getSuggestion($value)));
         $neco = $settings->getSuggestion($value);
-        $this->assertInternalType('string',$settings->get($neco[0], $this->getUserId(), 'testingGroup'));
+        $this->assertInternalType('string', $settings->get($neco[0], $this->getUserId(), 'testingGroup'));
     }
 
 
@@ -716,7 +625,6 @@ class SettingsTest extends TestCase
 
         /* Property parameter1 was clear */
         $this->assertNull($settings->get('parameter1'));
-
     }
 
 
@@ -746,16 +654,13 @@ class SettingsTest extends TestCase
             [$name => null]
         );
 
-       $settings->setDefault($name, null);
+        $settings->setDefault($name, null);
 
         $settings->set($name, $value, $owner, $group);
 
-        //tests
-
         /* conditions for settingProvider count of arguments */
-        if(isset($group)){
+        if (isset($group)) {
             $this->assertEquals(null, $settings->get($name, $owner, $group));
-
         } elseif (isset($owner)) {
             $this->assertEquals(null, $settings->get($name, $owner));
         } else {
@@ -782,7 +687,6 @@ class SettingsTest extends TestCase
         $settingsEntity->setValue('value');
         $settingsEntity->setOwner($this->getUserId());
         $settingsEntity->setGroup('testingGroup');
-
 
         $settingsRepository = $this
             ->getMockBuilder(EntityRepository::class)
@@ -858,167 +762,5 @@ class SettingsTest extends TestCase
         $settings->clear($this->getUserId(), 'testingGroup');
 
         $this->assertEquals('67cm', $settings->get('height'));
-    }
-
-
-    public function testSettingsExtension()
-    {
-        // Mocking
-        $settingsEntity = new Setting();
-        $settingsEntity->setName('parameter');
-        $settingsEntity->setValue('value');
-
-        $settingsRepository = $this
-            ->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $settingsRepository
-            ->method('findBy')
-            ->will($this->returnValue($settingsEntity));
-
-        $settingsRepository
-            ->method('findAll')
-            ->willReturn($this->returnValue($settingsEntity));
-
-        $settings = new SettingsManager(
-            $this->getRegistry($settingsRepository),
-            [
-                'parameter' => 'value'
-            ],
-            new ApcuCache()
-        );
-
-        $extension = new SettingsExtension($settings);
-
-        $this->assertEquals('settings_extension', $extension->getName());
-        $this->assertContainsOnlyInstancesOf(\Twig_SimpleFunction::class, $extension->getFunctions());
-        $this->assertEquals('value', $extension->getSetting('parameter'));
-        $this->assertTrue($extension->hasSetting('parameter'));
-        $this->assertTrue($extension->hasSettingValue('parameter', 'value'));
-    }
-
-
-    public function testSettingsExtensionGetExceptionCatchedAndSetToNull()
-    {
-        // Mocking
-        $settingsEntity = new Setting();
-        $settingsEntity->setName('parameter');
-        $settingsEntity->setValue('value');
-
-        $settingsRepository = $this
-            ->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $settingsRepository
-            ->method('findBy')
-            ->will($this->returnValue($settingsEntity));
-
-        $settingsRepository
-            ->method('findAll')
-            ->willReturn($this->returnValue($settingsEntity));
-
-        $settings = new SettingsManager(
-            $this->getRegistry($settingsRepository),
-            [
-                'parameter' => 'value'
-            ],
-            new ApcuCache()
-        );
-
-        $extension = new SettingsExtension($settings);
-
-        $this->assertNull($extension->getSetting('foo'));
-    }
-
-
-    /**
-     * @dataProvider configurationDataProvider
-     */
-    public function testConfiguration($configs)
-    {
-        $loader = new TrinitySettingsExtension();
-
-        $container = new ContainerBuilder();
-        $loader->load($configs, $container);
-
-        $parameterBag = $container->getParameter('settings_manager.settings');
-
-        if(array_key_exists('null_value', $configs[0]['settings'])){
-            $this->assertEquals($configs[0]['settings']['null_value'], $parameterBag['null_value']);
-            $this->assertEquals($configs[0]['settings']['key'], $parameterBag['key']);
-            $this->assertEquals($configs[0]['settings']['group.key'], $parameterBag['group.key']);
-        } else {
-            $this->assertEmpty($parameterBag);
-        }
-    }
-
-
-    public function configurationDataProvider()
-    {
-        return [
-            [
-                [
-                    [
-                        'settings' => [
-                            'null_value' => '~',
-                            'key' => 'testKey',
-                            'group.key' => 'testGroupKey'
-                        ]
-                    ]
-                ]
-            ]
-            ,
-            [
-                [
-                    [
-                        'settings' => [
-                            'null_value' => '~',
-                            'key' => 'default',
-                            'group.key' => 'default'
-                        ]
-                    ]
-                ]
-
-            ],
-            [
-                [
-                    [
-                        'settings' => [
-                            'null_value' => 'null',
-                            'key' => 'null',
-                            'group.key' => 'null'
-                        ]
-                    ]
-                ]
-            ],
-            [
-                [
-                    [
-                        'settings' => [
-
-                        ]
-
-                    ]
-                ]
-            ]
-        ];
-    }
-
-
-    public function testSettingBundle()
-    {
-        $container = new ContainerBuilder();
-        $settingBundle = new SettingsBundle();
-
-        $settingBundle->build($container);
-
-        $extensions = $container->getExtensions();
-
-        $this->assertInstanceOf(TrinitySettingsExtension::class , $extensions['trinity_settings']);
-        $this->assertInstanceOf(TrinitySettingsExtension::class , $container->getExtension('trinity_settings'));
-        $this->assertTrue($container->hasExtension('trinity_settings'));
-
     }
 }

@@ -34,7 +34,12 @@
   },
 
   "autoload": {
-    "psr-4": { "Trinity\\Bundle\\SettingsBundle\\": "" },
+    "psr-4": {
+      "Trinity\\Bundle\\SettingsBundle\\": ""
+    },
+    "psr-0": {
+      "Tests": "Tests/"
+    },
     "exclude-from-classmap": [
       "/Tests/"
     ]
