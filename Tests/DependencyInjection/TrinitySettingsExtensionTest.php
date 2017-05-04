@@ -23,10 +23,10 @@ class TrinitySettingsExtensionTest extends BaseTest
 
         $extensions = $container->getExtensions();
 
-        $this->assertInstanceOf(TrinitySettingsExtension::class, $extensions['trinity_settings']);
+        static::assertInstanceOf(TrinitySettingsExtension::class, $extensions['trinity_settings']);
 
-        $this->assertInstanceOf(TrinitySettingsExtension::class, $container->getExtension('trinity_settings'));
+        static::assertInstanceOf(TrinitySettingsExtension::class, $container->getExtension('trinity_settings'));
 
-        $this->assertTrue($container->hasExtension('trinity_settings'));
+        static::assertTrue($container->hasExtension('trinity_settings'));
     }
 }

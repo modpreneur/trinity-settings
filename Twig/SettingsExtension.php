@@ -32,7 +32,7 @@ class SettingsExtension extends \Twig_Extension
     /**
      * @return array
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new \Twig_SimpleFunction('get_setting', [$this, 'getSetting']),
@@ -41,13 +41,13 @@ class SettingsExtension extends \Twig_Extension
         ];
     }
 
-
     /**
      * @param string $name
      * @param int|null $owner
      * @param null|string $group
      *
      * @return mixed|null
+     * @throws \UnexpectedValueException
      */
     public function getSetting($name, $owner = null, $group = null)
     {
@@ -63,13 +63,13 @@ class SettingsExtension extends \Twig_Extension
         return $value;
     }
 
-
     /**
      * @param string $name
      * @param int|null $owner
      * @param null|string $group
      *
      * @return mixed|null
+     * @throws \UnexpectedValueException
      */
     public function hasSetting($name, $owner = null, $group = null)
     {
@@ -78,16 +78,16 @@ class SettingsExtension extends \Twig_Extension
         return $this->settings->has($name, $owner, $group);
     }
 
-
     /**
      * @param $name
      * @param $value
-     * @param null $owner
+     * @param int|null $owner
      * @param null $group
      *
      * @return bool
+     * @throws \UnexpectedValueException
      */
-    public function hasSettingValue($name, $value, $owner = null, $group = null)
+    public function hasSettingValue($name, $value, ?int $owner = null, $group = null)
     {
         $owner = $this->getOwner($owner);
 
@@ -98,9 +98,9 @@ class SettingsExtension extends \Twig_Extension
     /**
      * @param int $owner
      *
-     * @return int
+     * @return int | null
      */
-    private function getOwner($owner)
+    private function getOwner($owner): ?int
     {
         return $owner;
     }
@@ -111,7 +111,7 @@ class SettingsExtension extends \Twig_Extension
      *
      * @return string The extension name
      */
-    public function getName()
+    public function getName(): string
     {
         return 'settings_extension';
     }

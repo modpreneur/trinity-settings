@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  *     @ORM\UniqueConstraint(name="unique_name_owner_id_group_name", columns={"name", "owner_id", "group_name"} )
  *     }
  * )
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="SettingRepository")
  */
 class Setting
 {
@@ -66,7 +66,7 @@ class Setting
      *
      * @return integer
      */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
@@ -76,14 +76,10 @@ class Setting
      * Set name
      *
      * @param string $name
-     *
-     * @return Setting
      */
     public function setName($name)
     {
         $this->name = $name;
-
-        return $this;
     }
 
 
@@ -92,7 +88,7 @@ class Setting
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -102,32 +98,28 @@ class Setting
      * Set value
      *
      * @param string $value
-     *
-     * @return Setting
      */
     public function setValue($value)
     {
-        $this->value = serialize($value);
-
-        return $this;
+        $this->value = \serialize($value);
     }
 
 
     /**
      * Get value
      *
-     * @return string
+     * @return array | string | null
      */
     public function getValue()
     {
-        return unserialize($this->value);
+        return \unserialize($this->value);
     }
 
 
     /**
-     * @return string
+     * @return string | null
      */
-    public function getOwnerId()
+    public function getOwnerId(): ?string
     {
         return $this->ownerId;
     }
@@ -140,7 +132,7 @@ class Setting
      *
      * @return Setting
      */
-    public function setOwnerId($ownerId)
+    public function setOwnerId($ownerId): Setting
     {
         return $this->setOwner($ownerId);
     }
@@ -149,11 +141,11 @@ class Setting
     /**
      * @param int|object $owner
      *
-     * @return $this
+     * @return Setting
      */
-    public function setOwner($owner)
+    public function setOwner($owner): Setting
     {
-        if (is_object($owner) && method_exists($owner, 'getId')) {
+        if (\is_object($owner) && \method_exists($owner, 'getId')) {
             $owner = $owner->getId();
         }
 
@@ -163,9 +155,9 @@ class Setting
 
 
     /**
-     * @return string
+     * @return string | null
      */
-    public function getGroup()
+    public function getGroup(): ?string
     {
         return $this->group;
     }
@@ -183,7 +175,7 @@ class Setting
     /**
      * @return boolean
      */
-    public function isIsPrivate()
+    public function isIsPrivate(): bool
     {
         return $this->isPrivate;
     }

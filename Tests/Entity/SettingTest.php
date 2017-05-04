@@ -22,34 +22,34 @@ class SettingTest extends BaseTest
         // Set up the expectation for the update() method
         // to be called only once and with the string 'something'
         // as its parameter.
-        $owner->expects($this->any())
+        $owner->expects(static::any())
             ->method('getId')
-            ->will($this->returnValue(1));
+            ->will(static::returnValue(1));
 
 
         $settingsEntity = new Setting();
 
-        $this->assertNull($settingsEntity->getId());
+        static::assertNull($settingsEntity->getId());
 
         $settingsEntity->setName('name');
-        $this->assertEquals('name', $settingsEntity->getName());
+        static::assertEquals('name', $settingsEntity->getName());
 
         $settingsEntity->setValue('value');
-        $this->assertEquals('value', $settingsEntity->getValue());
+        static::assertEquals('value', $settingsEntity->getValue());
 
         $settingsEntity->setGroup('group');
-        $this->assertEquals('group', $settingsEntity->getGroup());
+        static::assertEquals('group', $settingsEntity->getGroup());
 
         $settingsEntity->setOwnerId(1);
-        $this->assertEquals(1, $settingsEntity->getOwnerId());
+        static::assertEquals(1, $settingsEntity->getOwnerId());
 
         $settingsEntity->setOwner(2);
-        $this->assertEquals(2, $settingsEntity->getOwnerId());
+        static::assertEquals(2, $settingsEntity->getOwnerId());
 
         $settingsEntity->setOwner($owner);
-        $this->assertEquals(1, $settingsEntity->getOwnerId());
+        static::assertEquals(1, $settingsEntity->getOwnerId());
 
         $settingsEntity->setIsPrivate(false);
-        $this->assertFalse($settingsEntity->isIsPrivate());
+        static::assertFalse($settingsEntity->isIsPrivate());
     }
 }

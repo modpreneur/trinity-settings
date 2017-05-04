@@ -27,7 +27,7 @@ class SettingsManagerTest extends BaseTest
             ->getMock();
         $settingsRepository
             ->method('findOneBy')
-            ->will($this->returnValue([]));
+            ->will(static::returnValue([]));
 
         $settingsRepository
             ->method('findAll')
@@ -42,7 +42,8 @@ class SettingsManagerTest extends BaseTest
 
     /**
      * @expectedException \Trinity\Bundle\SettingsBundle\Exception\PropertyNotExistsException
-     * @expectedExceptionMessage Property 'profilUrl' doesn't exists. Did you mean profileUrl. Available properties are profileUrl.
+     * @expectedExceptionMessage
+     * Property 'profilUrl' doesn't exists. Did you mean profileUrl. Available properties are profileUrl.
      */
     public function testGetValueWithTypeErrorProperty()
     {
@@ -52,7 +53,7 @@ class SettingsManagerTest extends BaseTest
             ->getMock();
         $settingsRepository
             ->method('findOneBy')
-            ->will($this->returnValue([]));
+            ->will(static::returnValue([]));
 
         $settingsRepository
             ->method('findAll')
@@ -73,21 +74,21 @@ class SettingsManagerTest extends BaseTest
             ->getMock();
         $settingsRepository
             ->method('findOneBy')
-            ->will($this->returnValue([]));
+            ->will(static::returnValue([]));
 
         $settingsRepository
             ->method('findAll')
             ->willReturn([]);
 
         $settings = new SettingsManager($this->getRegistry($settingsRepository), ['profileUrl' => 'defaultValue']);
-        $this->assertEquals('defaultValue', $settings->get('profileUrl'));
+        static::assertEquals('defaultValue', $settings->get('profileUrl'));
 
         // default value for user
-        $this->assertEquals('defaultValue', $settings->get('profileUrl', 1));
+        static::assertEquals('defaultValue', $settings->get('profileUrl', 1));
 
         // group with default value
         $settings = new SettingsManager($this->getRegistry($settingsRepository), ['user.profileUrl' => 'defaultValue']);
-        $this->assertEquals('defaultValue', $settings->get('profileUrl', 1, 'user'));
+        static::assertEquals('defaultValue', $settings->get('profileUrl', 1, 'user'));
     }
 
 
@@ -101,27 +102,27 @@ class SettingsManagerTest extends BaseTest
             ->getMock();
         $settingsRepository
             ->method('findOneBy')
-            ->will($this->returnValue($settingsEntity));
+            ->will(static::returnValue($settingsEntity));
 
         $settings = new SettingsManager($this->getRegistry($settingsRepository), ['user.profileUrl']);
         $settings->set('profileUrl', 'https://example.php/image.jpg', $this->getUserId(), 'user');
 
-        $this->assertEquals('profileUrl_1', $settingsEntity->getName());
-        $this->assertEquals('https://example.php/image.jpg', $settingsEntity->getValue());
-        $this->assertEquals($this->getUserId(), $settingsEntity->getOwnerId());
-        $this->assertEquals('user', $settingsEntity->getGroup());
+        static::assertEquals('profileUrl_1', $settingsEntity->getName());
+        static::assertEquals('https://example.php/image.jpg', $settingsEntity->getValue());
+        static::assertEquals($this->getUserId(), $settingsEntity->getOwnerId());
+        static::assertEquals('user', $settingsEntity->getGroup());
 
         /* array as value */
         $settings->set('profileUrl', ['x', 'y', 'z'], $this->getUserId(), 'user');
-        $this->assertEquals(['x', 'y', 'z'], $settingsEntity->getValue());
+        static::assertEquals(['x', 'y', 'z'], $settingsEntity->getValue());
 
         // without group
         $settings->set('profileUrl', 'value', $this->getUserId());
-        $this->assertNull($settingsEntity->getGroup());
+        static::assertNull($settingsEntity->getGroup());
 
         // without group and userId
         $settings->set('profileUrl', 'value');
-        $this->assertNull($settingsEntity->getOwnerId());
+        static::assertNull($settingsEntity->getOwnerId());
     }
 
 
@@ -137,7 +138,7 @@ class SettingsManagerTest extends BaseTest
             ->getMock();
         $settingsRepository
             ->method('findOneBy')
-            ->will($this->returnValue($settingsEntity));
+            ->will(static::returnValue($settingsEntity));
 
         $settingsRepository
             ->method('findAll')
@@ -151,9 +152,9 @@ class SettingsManagerTest extends BaseTest
 
         $settings->set('parameter', 'tom'); // apcu
 
-        $this->assertEquals('tom', $settings->get('parameter'));
-        sleep(2);
-        $this->assertEquals('tom', $settings->get('parameter'));
+        static::assertEquals('tom', $settings->get('parameter'));
+        \sleep(2);
+        static::assertEquals('tom', $settings->get('parameter'));
     }
 
 
@@ -170,7 +171,7 @@ class SettingsManagerTest extends BaseTest
             ->getMock();
         $settingsRepository
             ->method('findOneBy')
-            ->will($this->returnValue($settingsEntity));
+            ->will(static::returnValue($settingsEntity));
 
         $settingsRepository
             ->method('findAll')
@@ -187,7 +188,7 @@ class SettingsManagerTest extends BaseTest
 
         // test
 
-        $this->assertEquals('67cm', $settings->get('height'));
+        static::assertEquals('67cm', $settings->get('height'));
     }
 
 
@@ -204,7 +205,7 @@ class SettingsManagerTest extends BaseTest
             ->getMock();
         $settingsRepository
             ->method('findOneBy')
-            ->will($this->returnValue($settingsEntity));
+            ->will(static::returnValue($settingsEntity));
 
         $settingsRepository
             ->method('findAll')
@@ -217,7 +218,7 @@ class SettingsManagerTest extends BaseTest
         );
         $settings->setDefault('height', 'default');
 
-        $this->assertEquals('default', $settings->get('height'));
+        static::assertEquals('default', $settings->get('height'));
     }
 
 
@@ -236,7 +237,7 @@ class SettingsManagerTest extends BaseTest
             ->getMock();
         $settingsRepository
             ->method('findOneBy')
-            ->will($this->returnValue($settingsEntity));
+            ->will(static::returnValue($settingsEntity));
 
         $settingsRepository
             ->method('findAll')
@@ -244,7 +245,7 @@ class SettingsManagerTest extends BaseTest
 
         $settingsRepository
             ->method('findBy')
-            ->will($this->returnValue($settingsEntity));
+            ->will(static::returnValue($settingsEntity));
 
         $settings = new SettingsManager(
             $this->getRegistry($settingsRepository),
@@ -252,20 +253,20 @@ class SettingsManagerTest extends BaseTest
             new ApcuCache()
         );
 
-        $this->assertEquals('value', $settings->get('parameter', $this->getUserId()));
+        static::assertEquals('value', $settings->get('parameter', $this->getUserId()));
 
         $settings->clear($this->getUserId(), 'testingGroup');
         $settings->setDefault('height', 'default');
 
-        $this->assertEquals('default', $settings->get('height', $this->getUserId()));
+        static::assertEquals('default', $settings->get('height', $this->getUserId()));
 
         $settings->set('height', '67cm', $this->getUserId(), 'testingGroup'); // apcu
 
-        $this->assertEquals('67cm', $settings->get('height', $this->getUserId()));
+        static::assertEquals('67cm', $settings->get('height', $this->getUserId()));
 
         $settings->clear($this->getUserId(), 'testingGroup');
 
-        $this->assertEquals('default', $settings->get('height'));
+        static::assertEquals('default', $settings->get('height'));
     }
 
 
@@ -285,12 +286,12 @@ class SettingsManagerTest extends BaseTest
 
         $settingsRepository
             ->method('findOneBy')
-            ->with($this->equalTo(['name' => 'foo']))
-            ->will($this->returnValue(null));
+            ->with(static::equalTo(['name' => 'foo']))
+            ->will(static::returnValue(null));
 
         $settingsRepository
             ->method('findOneBy')
-            ->will($this->returnValue($settingsEntity));
+            ->will(static::returnValue($settingsEntity));
 
         $settingsRepository
             ->method('findAll')
@@ -305,11 +306,11 @@ class SettingsManagerTest extends BaseTest
         $settings->set('height', '67cm', $this->getUserId(), 'testingGroup'); // apcu
 
         /* has for existing setting */
-        $this->assertTrue($settings->has('height', $this->getUserId()));
-        $this->assertTrue($settings->has('height', $this->getUserId(), 'testingGroup'));
+        static::assertTrue($settings->has('height', $this->getUserId()));
+        static::assertTrue($settings->has('height', $this->getUserId(), 'testingGroup'));
 
         /* has for not existing setting */
-        $this->assertFalse($settings->has('foo', $this->getUserId()));
+        static::assertFalse($settings->has('foo', $this->getUserId()));
     }
 
 
@@ -333,17 +334,21 @@ class SettingsManagerTest extends BaseTest
         );
 
         /* getCacheProvider for SettingsManager where is not defined */
-        $this->assertNull($settings->getCacheProvider());
+        static::assertNull($settings->getCacheProvider());
 
         $settings->setCacheProvider(new ApcuCache());
 
         /* getCacheProvider for SettingsManager where is set cacheProvider */
-        $this->assertInstanceOf(ApcuCache::class, $settings->getCacheProvider());
+        static::assertInstanceOf(ApcuCache::class, $settings->getCacheProvider());
     }
-
 
     /**
      * @dataProvider settingProvider
+     *
+     * @param $name
+     * @param $value
+     * @param null $owner
+     * @param null $group
      */
     public function testSetWeirdData($name, $value, $owner = null, $group = null)
     {
@@ -361,7 +366,7 @@ class SettingsManagerTest extends BaseTest
 
         $settingsRepository
             ->method('findOneBy')
-            ->will($this->returnValue($settingsEntity));
+            ->will(static::returnValue($settingsEntity));
 
         $settings = new SettingsManager(
             $this->getRegistry($settingsRepository),
@@ -374,21 +379,23 @@ class SettingsManagerTest extends BaseTest
 
         /* conditions for settingProvider count of arguments */
         if (isset($group)) {
-            $this->assertEquals($value, $settings->get($name, $owner, $group));
+            static::assertEquals($value, $settings->get($name, $owner, $group));
 
         } elseif (isset($owner)) {
-            $this->assertEquals($value, $settings->get($name, $owner));
+            static::assertEquals($value, $settings->get($name, $owner));
         } else {
-            $this->assertEquals($value, $settings->get($name));
+            static::assertEquals($value, $settings->get($name));
         }
     }
 
-
-    public function settingProvider()
+    /**
+     * @return array
+     */
+    public function settingProvider(): array
     {
         return [
             ['parameter1', '1 + 2', 1, 'testingGroup'],
-            ['parameter2', "value", 987654, 'testingGroup'],
+            ['parameter2', 'value', 987654, 'testingGroup'],
             ['parameter3', '"z\\/*/\\??$$#&&"', 2345, 'testingGroup'],
             ['parameter4', 'gdfgd', 52345234, 'testingGroup'],
             ['parameter5', 'sgd', 53425324, 'testingGroup'],
@@ -408,7 +415,7 @@ class SettingsManagerTest extends BaseTest
 
         $settingsRepository
             ->method('findBy')
-            ->will($this->returnValue([]));
+            ->will(static::returnValue([]));
 
         $settingsRepository
             ->method('findAll')
@@ -419,17 +426,20 @@ class SettingsManagerTest extends BaseTest
         /* geting all settings without setup any setting */
 
         //parameterless
-        $this->assertEmpty($settings->all());
+        static::assertEmpty($settings->all());
 
         //with arguments
-        $this->assertEmpty($settings->all('xxx'));
-        $this->assertEmpty($settings->all(null, 'yyy'));
-        $this->assertEmpty($settings->all('xxx', 'yyy'));
+        static::assertEmpty($settings->all('xxx'));
+        static::assertEmpty($settings->all(null, 'yyy'));
+        static::assertEmpty($settings->all('xxx', 'yyy'));
     }
-
 
     /**
      * @dataProvider settingManyProvider
+     *
+     * @param $parameters
+     * @param null $owner
+     * @param null $group
      */
     public function testSetMany($parameters, $owner = null, $group = null)
     {
@@ -444,7 +454,7 @@ class SettingsManagerTest extends BaseTest
             $settingsEntity->setValue($value);
             !$owner ?: $settingsEntity->setOwner($owner);
             !$group ?: $settingsEntity->setGroup($group);
-            array_push($all, $settingsEntity);
+            $all[] = $settingsEntity;
         }
         $settingsRepository = $this
             ->getMockBuilder(EntityRepository::class)
@@ -453,11 +463,11 @@ class SettingsManagerTest extends BaseTest
 
         $settingsRepository
             ->method('findBy')
-            ->will($this->returnValue($all));
+            ->will(static::returnValue($all));
 
         $settingsRepository
             ->method('findAll')
-            ->willReturn($this->returnValue($all));
+            ->willReturn(static::returnValue($all));
 
         $settings = new SettingsManager(
             $this->getRegistry($settingsRepository),
@@ -472,13 +482,13 @@ class SettingsManagerTest extends BaseTest
         $index = 0;
 
         foreach ($allGhost as $key => $value) {
-            $this->assertTrue(array_key_exists($all[$index]->getName(), $allGhost));
+            static::assertTrue(\array_key_exists($all[$index]->getName(), $allGhost));
 
             //check if is correctly set
-            $this->assertEquals($all[$index]->getValue(), $allGhost[$all[$index]->getName()]);
+            static::assertEquals($all[$index]->getValue(), $allGhost[$all[$index]->getName()]);
 
             //check if is all $paramenters was correctly transformet to Setting::class
-            $this->assertInstanceOf(Setting::class, $all[$index]);
+            static::assertInstanceOf(Setting::class, $all[$index]);
             $index++;
         }
     }
@@ -523,9 +533,10 @@ class SettingsManagerTest extends BaseTest
         ];
     }
 
-
     /**
      * @dataProvider getSuggestionProvider
+     *
+     * @param $value
      */
     public function testGetSuggestion($value)
     {
@@ -541,11 +552,11 @@ class SettingsManagerTest extends BaseTest
 
         $settingsRepository
             ->method('findBy')
-            ->will($this->returnValue($settingsEntity));
+            ->will(static::returnValue($settingsEntity));
 
         $settingsRepository
             ->method('findAll')
-            ->willReturn($this->returnValue($settingsEntity));
+            ->willReturn(static::returnValue($settingsEntity));
 
         $settings = new SettingsManager(
             $this->getRegistry($settingsRepository),
@@ -560,14 +571,16 @@ class SettingsManagerTest extends BaseTest
         );
 
         $settings->set('parameter', 'value', $this->getUserId(), 'testingGroup');
-        $this->assertNotEmpty($settings->getSuggestion($value));
-        $this->assertTrue(in_array('parameter', $settings->getSuggestion($value)));
+        static::assertNotEmpty($settings->getSuggestion($value));
+        static::assertTrue(\in_array('parameter', $settings->getSuggestion($value), true));
         $neco = $settings->getSuggestion($value);
-        $this->assertInternalType('string', $settings->get($neco[0], $this->getUserId(), 'testingGroup'));
+        static::assertInternalType('string', $settings->get($neco[0], $this->getUserId(), 'testingGroup'));
     }
 
-
-    public function getSuggestionProvider()
+    /**
+     * @return array
+     */
+    public function getSuggestionProvider(): array
     {
         return [
             ['parameter1'],
@@ -581,7 +594,8 @@ class SettingsManagerTest extends BaseTest
 
     /**
      * @expectedException \Trinity\Bundle\SettingsBundle\Exception\PropertyNotExistsException
-     * @expectedExceptionMessage Property 'parameter1' doesn't exists. Did you mean parameter. Available properties are parameter.
+     * @expectedExceptionMessage
+     * Property 'parameter1' doesn't exists. Did you mean parameter. Available properties are parameter.
      */
     public function testCacheProviderClearSetGet()
     {
@@ -597,11 +611,11 @@ class SettingsManagerTest extends BaseTest
 
         $settingsRepository
             ->method('findBy')
-            ->will($this->returnValue($settingsEntity));
+            ->will(static::returnValue($settingsEntity));
 
         $settingsRepository
             ->method('findAll')
-            ->willReturn($this->returnValue($settingsEntity));
+            ->willReturn(static::returnValue($settingsEntity));
 
         $settings = new SettingsManager(
             $this->getRegistry($settingsRepository),
@@ -610,26 +624,30 @@ class SettingsManagerTest extends BaseTest
             ]
         );
 
-        $this->assertNull($settings->getCacheProvider());
+        static::assertNull($settings->getCacheProvider());
 
         $settings->setCacheProvider(new ApcuCache());
 
-        $this->assertInstanceOf(ApcuCache::class, $settings->getCacheProvider());
+        static::assertInstanceOf(ApcuCache::class, $settings->getCacheProvider());
 
         $settings->set('parameter1', 'value1');
 
-        $this->assertEquals('value1', $settings->get('parameter1'));
+        static::assertEquals('value1', $settings->get('parameter1'));
 
         $settings->clearCacheProvider();
 
 
         /* Property parameter1 was clear */
-        $this->assertNull($settings->get('parameter1'));
+        static::assertNull($settings->get('parameter1'));
     }
-
 
     /**
      * @dataProvider setDataWithNullDefaultValueProvider
+     *
+     * @param $name
+     * @param $value
+     * @param null $owner
+     * @param null $group
      */
     public function testSetDataWithNullDefaultValue($name, $value, $owner = null, $group = null)
     {
@@ -647,7 +665,7 @@ class SettingsManagerTest extends BaseTest
 
         $settingsRepository
             ->method('findOneBy')
-            ->will($this->returnValue($settingsEntity));
+            ->will(static::returnValue($settingsEntity));
 
         $settings = new SettingsManager(
             $this->getRegistry($settingsRepository),
@@ -660,16 +678,18 @@ class SettingsManagerTest extends BaseTest
 
         /* conditions for settingProvider count of arguments */
         if (isset($group)) {
-            $this->assertEquals(null, $settings->get($name, $owner, $group));
+            static::assertEquals(null, $settings->get($name, $owner, $group));
         } elseif (isset($owner)) {
-            $this->assertEquals(null, $settings->get($name, $owner));
+            static::assertEquals(null, $settings->get($name, $owner));
         } else {
-            $this->assertEquals(null, $settings->get($name));
+            static::assertEquals(null, $settings->get($name));
         }
     }
 
-
-    public function setDataWithNullDefaultValueProvider()
+    /**
+     * @return array
+     */
+    public function setDataWithNullDefaultValueProvider(): array
     {
         return [
             ['parameter1', '1 + 2', 1, 'testingGroup'],
@@ -695,11 +715,11 @@ class SettingsManagerTest extends BaseTest
 
         $settingsRepository
             ->method('findOneBy')
-            ->will($this->throwException(new \Exception));
+            ->will(static::throwException(new \Exception));
 
         $settingsRepository
             ->method('findAll')
-            ->will($this->throwException(new \Exception));
+            ->will(static::throwException(new \Exception));
 
         $settings = new SettingsManager(
             $this->getRegistry($settingsRepository),
@@ -709,7 +729,7 @@ class SettingsManagerTest extends BaseTest
         $settings->setDefault('parameter_1', 'default');
         $settings->set('parameter', 'foo', $this->getUserId(), 'testingGroup'); // apcu
 
-        $this->assertEquals('default', $settings->get('parameter', 1, 'testingGroup'));
+        static::assertEquals('default', $settings->get('parameter', 1, 'testingGroup'));
     }
 
 
@@ -736,7 +756,7 @@ class SettingsManagerTest extends BaseTest
             ->getMock();
         $settingsRepository
             ->method('findOneBy')
-            ->will($this->returnValue($settingsEntity));
+            ->will(static::returnValue($settingsEntity));
 
         $settingsRepository
             ->method('findAll')
@@ -753,14 +773,14 @@ class SettingsManagerTest extends BaseTest
 
         $settings->setDefault('height', 'default');
 
-        $this->assertEquals('default', $settings->get('height', $this->getUserId()));
+        static::assertEquals('default', $settings->get('height', $this->getUserId()));
 
         $settings->set('height', '67cm', $this->getUserId(), 'testingGroup'); // apcu
 
-        $this->assertEquals('67cm', $settings->get('height', null, 'testingGroup'));
+        static::assertEquals('67cm', $settings->get('height', null, 'testingGroup'));
 
         $settings->clear($this->getUserId(), 'testingGroup');
 
-        $this->assertEquals('67cm', $settings->get('height'));
+        static::assertEquals('67cm', $settings->get('height'));
     }
 }

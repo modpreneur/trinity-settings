@@ -12,11 +12,12 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class ConfigurationTest extends BaseTest
 {
-
     /**
      * @dataProvider configurationDataProvider
+     *
+     * @param array $configs
      */
-    public function testConfiguration($configs)
+    public function testConfiguration(array $configs)
     {
         $loader = new TrinitySettingsExtension();
 
@@ -25,17 +26,19 @@ class ConfigurationTest extends BaseTest
 
         $parameterBag = $container->getParameter('settings_manager.settings');
 
-        if (array_key_exists('null_value', $configs[0]['settings'])) {
-            $this->assertEquals($configs[0]['settings']['null_value'], $parameterBag['null_value']);
-            $this->assertEquals($configs[0]['settings']['key'], $parameterBag['key']);
-            $this->assertEquals($configs[0]['settings']['group.key'], $parameterBag['group.key']);
+        if (\array_key_exists('null_value', $configs[0]['settings'])) {
+            static::assertEquals($configs[0]['settings']['null_value'], $parameterBag['null_value']);
+            static::assertEquals($configs[0]['settings']['key'], $parameterBag['key']);
+            static::assertEquals($configs[0]['settings']['group.key'], $parameterBag['group.key']);
         } else {
-            $this->assertEmpty($parameterBag);
+            static::assertEmpty($parameterBag);
         }
     }
 
-
-    public function configurationDataProvider()
+    /**
+     * @return array
+     */
+    public function configurationDataProvider(): array
     {
         return [
             [

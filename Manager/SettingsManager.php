@@ -66,7 +66,6 @@ class SettingsManager implements SettingsManagerInterface
         return $this->cacheProvider;
     }
 
-
     /**
      * @param string $name
      * @param mixed $value string, int, boolean, object, ...
@@ -74,6 +73,7 @@ class SettingsManager implements SettingsManagerInterface
      * @param null|string $group
      *
      * @return $this
+     * @throws \UnexpectedValueException
      *
      * @throws \Doctrine\ORM\OptimisticLockException
      * @throws \Doctrine\ORM\ORMInvalidArgumentException
@@ -88,7 +88,9 @@ class SettingsManager implements SettingsManagerInterface
 
         $nname = (null !== $owner) ? $name . '_' . $owner : $name;
 
-        if (null !== $item || !(array_key_exists($name, $this->defaults) && unserialize($this->defaults[$name]) === $item)) {
+        if (null !== $item
+            || !(\array_key_exists($name, $this->defaults) && \unserialize($this->defaults[$name]) === $item)
+        ) {
             $setting = $this->getOneByOwner($name, $owner, $group);
 
             if (null === $setting) {
@@ -107,18 +109,18 @@ class SettingsManager implements SettingsManagerInterface
         $this->getEntityManager()->flush();
 
         if ($this->cacheProvider) {
-            $this->cacheProvider->save($nname, serialize($setting), 10000);
+            $this->cacheProvider->save($nname, \serialize($setting), 10000);
         }
 
         return $this;
     }
-
 
     /**
      * @param int|null $owner $owner ($user->getId())
      * @param null $group
      *
      * @return array
+     * @throws \UnexpectedValueException
      * @throws PropertyNotExistsException
      */
     public function all($owner = null, $group = null)
@@ -127,12 +129,12 @@ class SettingsManager implements SettingsManagerInterface
         $rows = [];
 
         foreach ($all as $row) {
-            $rows[$row->getName()] = $this->get($row->getName(), $owner, $group);
+            $name = $row->getName();
+            $rows[$name] = $this->get($name, $owner, $group);
         }
 
         return $rows;
     }
-
 
     /**
      * @param string $name
@@ -140,6 +142,7 @@ class SettingsManager implements SettingsManagerInterface
      * @param null|string $group
      *
      * @return mixed
+     * @throws \UnexpectedValueException
      * @throws PropertyNotExistsException
      */
     public function get($name, $owner = null, $group = null)
@@ -152,16 +155,16 @@ class SettingsManager implements SettingsManagerInterface
 
         $property = $this->getOneByOwner($name, $owner, $group);
 
-        if (null === $property && array_key_exists($nName, $this->defaults)) {
-            $property = unserialize($this->defaults[$name]);
+        if (null === $property && \array_key_exists($nName, $this->defaults)) {
+            $property = \unserialize($this->defaults[$name]);
         } elseif ($property instanceof Setting) {
             $property = $property->getValue();
         } else {
-            if (array_key_exists($nName, $this->settings)) {
+            if (\array_key_exists($nName, $this->settings)) {
                 return $this->settings[$nName];
             }
 
-            if (array_key_exists($group . '.' . $nName, $this->settings)) {
+            if (\array_key_exists($group . '.' . $nName, $this->settings)) {
                 return $this->settings[$group . '.' . $nName];
             }
 
@@ -175,10 +178,10 @@ class SettingsManager implements SettingsManagerInterface
                 $message .= 'Group name is: \'' . $group . '\'. ';
             }
 
-            $hint = implode(', ', $this->getSuggestion($nName));
-            $defaults = array_keys($this->settings);
-            $set = array_keys($this->all());
-            $items = implode(', ', array_merge($defaults, $set));
+            $hint = \implode(', ', $this->getSuggestion($nName));
+            $defaults = \array_keys($this->settings);
+            $set = \array_keys($this->all());
+            $items = \implode(', ', \array_merge($defaults, $set));
 
             if ($hint) {
                 $message = $message . 'Did you mean ' . $hint . '. ';
@@ -211,13 +214,13 @@ class SettingsManager implements SettingsManagerInterface
         return $this;
     }
 
-
     /**
      * @param int|null $owner
      * @param null $group
      *
      * @throws \Doctrine\ORM\ORMInvalidArgumentException
      * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \UnexpectedValueException
      */
     public function clear($owner = null, $group = null)
     {
@@ -253,7 +256,7 @@ class SettingsManager implements SettingsManagerInterface
      */
     public function setDefault($name, $value)
     {
-        $this->defaults[$name] = serialize($value);
+        $this->defaults[$name] = \serialize($value);
         $this->set($name, $value); // try..
 
         return $this;
@@ -272,13 +275,12 @@ class SettingsManager implements SettingsManagerInterface
         $property = null;
 
         if ($this->cacheProvider) {
-            $property = unserialize($this->cacheProvider->fetch($name));
+            $property = \unserialize($this->cacheProvider->fetch($name));
             //dump('xxx');
             //dump($this->cacheProvider->fetch($name));
         }
 
         if (null === $property || false === $property) {
-
             try {
                 if ($group && $owner) {
                     $property = $this->getEntityManager()->getRepository(Setting::class)
@@ -326,47 +328,46 @@ class SettingsManager implements SettingsManagerInterface
         return $properties;
     }
 
-
     /**
      * @param string $name
      * @param int|null $owner
      * @param null|string $group
      *
      * @return bool
+     * @throws \UnexpectedValueException
      */
     public function has($name, $owner = null, $group = null): bool
     {
         try {
             $this->get($name, $owner, $group);
-
             return true;
         } catch (PropertyNotExistsException $ex) {
             return false;
         }
     }
 
-
     /**
      * @param string $value
      *
      * @return array
+     * @throws \UnexpectedValueException
      * @throws \Trinity\Bundle\SettingsBundle\Exception\PropertyNotExistsException
      */
-    public function getSuggestion($value)
+    public function getSuggestion($value): array
     {
-        $defaults = array_keys($this->settings);
-        $set = array_keys($this->all());
+        $defaults = \array_keys($this->settings);
+        $set = \array_keys($this->all());
         /** @var array $items */
-        $items = array_merge($defaults, $set);
+        $items = \array_merge($defaults, $set);
 
-        $norm = preg_replace($re = '#^(?=[A-Z])#', '', $value);
+        $norm = \preg_replace($re = '#^(?=[A-Z])#', '', $value);
         $best = [];
-        $min = (strlen($value) / 4 + 1) * 10 + .1;
+        $min = (\strlen($value) / 4 + 1) * 10 + .1;
         foreach ($items as $item) {
             if ($item !== $value
                 && (
-                    ($len = levenshtein($item, $value, 10, 11, 10)) < $min
-                    || ($len = levenshtein(preg_replace($re, '', $item), $norm, 10, 11, 10) + 20) < $min
+                    ($len = \levenshtein($item, $value, 10, 11, 10)) < $min
+                    || ($len = \levenshtein(\preg_replace($re, '', $item), $norm, 10, 11, 10) + 20) < $min
                 )
             ) {
                 $min = $len;
@@ -380,7 +381,7 @@ class SettingsManager implements SettingsManagerInterface
     /**
      * @return ObjectManager
      */
-    protected function getEntityManager()
+    protected function getEntityManager(): ObjectManager
     {
         if ($this->entityManager !== null) {
             return $this->entityManager;

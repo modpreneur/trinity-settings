@@ -14,9 +14,9 @@ abstract class BaseTest extends TestCase
 {
 
     /**
-     * @return Registry
+     * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getRegistry($settingsRepository)
+    protected function getRegistry($settingsRepository): \PHPUnit_Framework_MockObject_MockObject
     {
         $registry = $this
             ->getMockBuilder(Registry::class)
@@ -32,7 +32,7 @@ abstract class BaseTest extends TestCase
             ->willReturn($settingsRepository);
 
         $registry->method('getManager')
-            ->will($this->returnValue($entityManager));
+            ->will(static::returnValue($entityManager));
 
         return $registry;
     }

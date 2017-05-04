@@ -30,11 +30,11 @@ class SettingsExtensionTest extends BaseTest
 
         $settingsRepository
             ->method('findBy')
-            ->will($this->returnValue($settingsEntity));
+            ->will(static::returnValue($settingsEntity));
 
         $settingsRepository
             ->method('findAll')
-            ->willReturn($this->returnValue($settingsEntity));
+            ->willReturn(static::returnValue($settingsEntity));
 
         $settings = new SettingsManager(
             $this->getRegistry($settingsRepository),
@@ -46,11 +46,11 @@ class SettingsExtensionTest extends BaseTest
 
         $extension = new SettingsExtension($settings);
 
-        $this->assertEquals('settings_extension', $extension->getName());
-        $this->assertContainsOnlyInstancesOf(\Twig_SimpleFunction::class, $extension->getFunctions());
-        $this->assertEquals('value', $extension->getSetting('parameter'));
-        $this->assertTrue($extension->hasSetting('parameter'));
-        $this->assertTrue($extension->hasSettingValue('parameter', 'value'));
+        static::assertEquals('settings_extension', $extension->getName());
+        static::assertContainsOnlyInstancesOf(\Twig_SimpleFunction::class, $extension->getFunctions());
+        static::assertEquals('value', $extension->getSetting('parameter'));
+        static::assertTrue($extension->hasSetting('parameter'));
+        static::assertTrue($extension->hasSettingValue('parameter', 'value'));
     }
 
 
@@ -68,11 +68,11 @@ class SettingsExtensionTest extends BaseTest
 
         $settingsRepository
             ->method('findBy')
-            ->will($this->returnValue($settingsEntity));
+            ->will(static::returnValue($settingsEntity));
 
         $settingsRepository
             ->method('findAll')
-            ->willReturn($this->returnValue($settingsEntity));
+            ->willReturn(static::returnValue($settingsEntity));
 
         $settings = new SettingsManager(
             $this->getRegistry($settingsRepository),
@@ -84,6 +84,6 @@ class SettingsExtensionTest extends BaseTest
 
         $extension = new SettingsExtension($settings);
 
-        $this->assertNull($extension->getSetting('foo'));
+        static::assertNull($extension->getSetting('foo'));
     }
 }
