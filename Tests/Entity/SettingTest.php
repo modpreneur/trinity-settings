@@ -1,14 +1,14 @@
 <?php
 
-namespace Tests\Entity;
+namespace Trinity\Bundle\SettingsBundle\Tests\Entity;
 
 use Trinity\Bundle\SettingsBundle\Entity\Setting;
-use Tests\BaseTest;
-use Tests\Owner;
+use Trinity\Bundle\SettingsBundle\Tests\BaseTest;
+use Trinity\Bundle\SettingsBundle\Tests\Owner;
 
 /**
  * Class SettingTest
- * @package Tests
+ * @package Trinity\Bundle\SettingsBundle\Tests
  */
 class SettingTest extends BaseTest
 {
@@ -16,6 +16,7 @@ class SettingTest extends BaseTest
     public function testEntity()
     {
         $owner = $this->getMockBuilder(Owner::class)
+            ->disableOriginalConstructor()
             ->setMethods(['getId'])
             ->getMock();
 

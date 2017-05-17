@@ -1,17 +1,17 @@
 <?php
 
-namespace Tests\Twig;
+namespace Trinity\Bundle\SettingsBundle\Tests\Twig;
 
 use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\ORM\EntityRepository;
 use Trinity\Bundle\SettingsBundle\Entity\Setting;
 use Trinity\Bundle\SettingsBundle\Manager\SettingsManager;
 use Trinity\Bundle\SettingsBundle\Twig\SettingsExtension;
-use Tests\BaseTest;
+use Trinity\Bundle\SettingsBundle\Tests\BaseTest;
 
 /**
  * Class SettingsExtensionTest
- * @package Tests
+ * @package Trinity\Bundle\SettingsBundle\Tests
  */
 class SettingsExtensionTest extends BaseTest
 {

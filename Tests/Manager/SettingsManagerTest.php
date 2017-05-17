@@ -1,16 +1,16 @@
 <?php
 
-namespace Tests\Manager;
+namespace Trinity\Bundle\SettingsBundle\Tests\Manager;
 
 use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\ORM\EntityRepository;
 use Trinity\Bundle\SettingsBundle\Entity\Setting;
 use Trinity\Bundle\SettingsBundle\Manager\SettingsManager;
-use Tests\BaseTest;
+use Trinity\Bundle\SettingsBundle\Tests\BaseTest;
 
 /**
  * Class SettingsManagerTest
- * @package Tests
+ * @package Trinity\Bundle\SettingsBundle\Tests
  */
 class SettingsManagerTest extends BaseTest
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Trinity\Bundle\SettingsBundle\Tests;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use PHPUnit\Framework\TestCase;
@@ -8,7 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * Class BaseTest
- * @package Tests
+ * @package Trinity\Bundle\SettingsBundle\Tests
  */
 abstract class BaseTest extends TestCase
 {

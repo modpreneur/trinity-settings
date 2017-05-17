@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests;
+namespace Trinity\Bundle\SettingsBundle\Tests;
 
 /**
  * Class Owner
- * @package Tests
+ * @package Trinity\Bundle\SettingsBundle\Tests
  */
 class Owner
 {

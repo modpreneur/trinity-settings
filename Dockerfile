@@ -1,4 +1,4 @@
-FROM modpreneur/trinity-test:0.2.1
+FROM modpreneur/trinity-test:0.3
 
 MAINTAINER Martin Kolek <kole@modpreneur.com>
 

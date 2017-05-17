@@ -1,14 +1,14 @@
 <?php
 
-namespace Tests\DependencyInjection;
+namespace Trinity\Bundle\SettingsBundle\Tests\DependencyInjection;
 
-use Tests\BaseTest;
+use Trinity\Bundle\SettingsBundle\Tests\BaseTest;
 use Trinity\Bundle\SettingsBundle\DependencyInjection\TrinitySettingsExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Class ConfigurationTest
- * @package Tests
+ * @package Trinity\Bundle\SettingsBundle\Tests
  */
 class ConfigurationTest extends BaseTest
 {
