@@ -16,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  *     @ORM\UniqueConstraint(name="unique_name_owner_id_group_name", columns={"name", "owner_id", "group_name"} )
  *     }
  * )
- * @ORM\Entity(repositoryClass="SettingRepository")
+ * @ORM\Entity()
  */
 class Setting
 {
