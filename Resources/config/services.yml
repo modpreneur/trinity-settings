@@ -11,6 +11,7 @@ services:
         - "@doctrine"
         - "%settings_manager.settings%"
         - "@trinity.cache"
+        - "%kernel.environment%"
 
 
     trinity.settings.twig:

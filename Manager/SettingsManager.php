@@ -40,11 +40,16 @@ class SettingsManager implements SettingsManagerInterface
      * @param RegistryInterface $registry
      * @param array $settings
      * @param CacheProvider $cacheProvider
+     * @param string $env
      */
-    public function __construct(RegistryInterface $registry, array $settings, CacheProvider $cacheProvider = null)
-    {
+    public function __construct(
+        RegistryInterface $registry,
+        array $settings,
+        CacheProvider $cacheProvider = null,
+        string $env = 'dev'
+    ) {
         $this->doctrineRegistry = $registry;
-        $this->cacheProvider = $cacheProvider;
+        $this->cacheProvider = ($env === 'test') ? null : $cacheProvider;
         $this->settings = $settings;
     }
 
